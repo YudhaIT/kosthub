@@ -17,20 +17,28 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - run: npm install
-      - name: Build web + Android project
+      - name: Install
+        run: npm install
+      - name: Siapkan web dan proyek Android
         run: |
           mkdir -p www
           cp index.html www/index.html
           cp node_modules/jspdf/dist/jspdf.umd.min.js www/
           npx cap add android
+          sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <application#' android/app/src/main/AndroidManifest.xml
+      - name: Buat ikon (boleh gagal)
+        continue-on-error: true
+        run: |
           mkdir -p assets
           cp icon.png assets/icon-only.png
           cp icon-fg.png assets/icon-foreground.png
           npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#ffd84d' --iconBackgroundColorDark '#ffd84d'
-          sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <application#' android/app/src/main/AndroidManifest.xml
+      - name: Build APK
+        run: |
           npx cap sync android
-          cd android && chmod +x gradlew && ./gradlew assembleDebug
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: kosthub-apk
