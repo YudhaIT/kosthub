@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KostHub</title>
+<style>
+:root{--bg:#fff3dc;--card:#fffdf7;--ink:#2b2118;--bd:#2b2118;--shc:#2b2118;--mu:#7d6b58;--dot:#f0d9aa;--er:#e5484d;--ok:#13a05f;--on:#2b2118;--a:#ffd84d;--sh:3px 3px 0 var(--shc);--r:18px;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1713;--card:#272019;--ink:#f6ecdd;--bd:#5c4d3e;--shc:#000;--mu:#b3a290;--dot:#2a231b;--er:#ff7b7f;--ok:#46d48d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1713;--card:#272019;--ink:#f6ecdd;--bd:#5c4d3e;--shc:#000;--mu:#b3a290;--dot:#2a231b;--er:#ff7b7f;--ok:#46d48d;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg) radial-gradient(var(--dot) 1.3px,transparent 1.3px) 0 0/20px 20px;color:var(--ink);font:600 15px/1.45 ui-rounded,"Trebuchet MS",system-ui,sans-serif;min-height:100%;padding-bottom:96px}
+h1,h2,.fr{font-family:ui-rounded,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;font-weight:600;margin:0}
+main{max-width:700px;margin:0 auto;padding:14px 14px 0}
+.top{display:flex;align-items:center;gap:12px;margin:6px 0 14px}.top h1{font-size:26px;line-height:1.1}.top small{display:block;color:var(--mu);font-weight:700;font-size:13px}
+.mas{width:52px;height:52px;border-radius:50% 50% 46% 46%;background:var(--a);border:2px solid var(--bd);box-shadow:var(--sh);display:grid;place-items:center;font-size:26px;flex:0 0 auto;transform:rotate(-6deg)}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin-bottom:14px}
+.card.a{background:var(--a);color:var(--on);border-color:var(--bd)}
+.card.a .mu{color:#2b2118b0}
+h2{font-size:18px;margin:0 0 8px;display:flex;align-items:center;gap:6px}
+.mu{color:var(--mu);font-size:13px;font-weight:700}.big{font-family:ui-rounded,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;font-size:34px;font-weight:700;line-height:1.1}
+.grid{display:grid;gap:14px}.g3{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.wal{padding:10px 12px;margin:0;border-radius:14px;background:var(--card)}.wal b{font-family:ui-rounded,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;font-size:17px}
+.it{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:2px dashed color-mix(in srgb,var(--bd) 28%,transparent)}.it:first-of-type{border-top:0}
+.it>.b{flex:1;min-width:0;overflow-wrap:anywhere}
+.em{width:38px;height:38px;border-radius:12px;background:var(--a);border:2px solid var(--bd);display:grid;place-items:center;font-size:19px;flex:0 0 auto;color:var(--on)}
+.pos{color:var(--ok)}.neg{color:var(--er)}.late{color:var(--er)}
+.done{text-decoration:line-through;opacity:.5}
+button,input,select,textarea{font:inherit;color:var(--ink)}
+input,select,textarea{width:100%;background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:10px 12px;min-width:0;outline:0}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px var(--a)}
+label.f{display:block;margin-bottom:10px}label.f>span{display:block;font-size:13px;color:var(--mu);margin-bottom:4px}
+.btn{background:var(--a);color:var(--on);border:2px solid var(--bd);border-radius:12px;box-shadow:var(--sh);padding:10px 16px;font-weight:800;cursor:pointer;font-family:ui-rounded,"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;font-size:15px}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shc)}.btn:disabled{opacity:.5}
+.btn.g{background:var(--card);color:var(--ink)}.btn.s{padding:6px 10px;font-size:13px;box-shadow:2px 2px 0 var(--shc)}
+.x{background:none;border:0;color:var(--mu);font-size:16px;cursor:pointer;padding:4px 8px;border-radius:8px}.x:hover{color:var(--er)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:2px solid var(--bd);background:var(--card);border-radius:99px;padding:5px 12px;cursor:pointer;font-weight:800;font-size:13px}
+.chip.on{background:var(--a);color:var(--on);box-shadow:2px 2px 0 var(--shc)}
+.seg{display:flex;gap:6px;margin-bottom:14px}.seg .chip{flex:1;text-align:center;padding:8px}
+.bar{height:14px;border:2px solid var(--bd);border-radius:99px;background:var(--card);overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);border-right:2px solid var(--bd);transition:width .4s}
+.ck{appearance:none;width:26px;height:26px;border:2px solid var(--bd);border-radius:9px;background:var(--card);flex:0 0 auto;cursor:pointer;display:grid;place-items:center;margin:0;padding:0}
+.ck:checked{background:var(--ok)}.ck:checked::after{content:"✓";color:#fff;font-weight:800;font-size:16px}
+.empty{text-align:center;color:var(--mu);padding:14px 6px}.empty b{display:block;font-size:30px}
+nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;display:flex;gap:4px;background:var(--card);border:2px solid var(--bd);border-radius:24px;box-shadow:var(--sh);padding:6px;z-index:5}
+nav button{flex:1;background:none;border:2px solid transparent;border-radius:18px;padding:6px 0;font:700 11px ui-rounded,system-ui,sans-serif;color:var(--mu);cursor:pointer}
+nav button span{display:block;font-size:21px;line-height:1.2}
+nav button.on{background:var(--a);color:var(--on);border-color:var(--bd)}
+.fab{position:fixed;right:max(16px,calc(50% - 340px));bottom:calc(92px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;font-size:30px;line-height:1;padding:0;z-index:4}
+#ov{position:fixed;inset:0;background:#2b211888;display:none;align-items:flex-end;justify-content:center;z-index:20}
+#ov.on{display:flex}
+#sh{background:var(--card);border:2px solid var(--bd);border-radius:26px 26px 0 0;width:100%;max-width:520px;max-height:90vh;overflow:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.th{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px}.th div{position:relative;flex:0 0 auto}
+.th img{height:100px;border-radius:10px;border:2px solid var(--bd);display:block}
+.th b{position:absolute;top:-4px;right:-4px;background:var(--er);color:#fff;border-radius:50%;width:22px;height:22px;text-align:center;font-size:12px;line-height:22px;cursor:pointer;border:2px solid var(--bd)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(170px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);border-radius:99px;padding:9px 16px;z-index:30;font-weight:800;max-width:90%;text-align:center}
+@media (min-width:860px){
+ body{padding-bottom:30px;padding-left:96px}main{max-width:820px;padding-top:24px}
+ nav{left:14px;right:auto;top:50%;bottom:auto;transform:translateY(-50%);flex-direction:column;width:74px;margin:0}
+ nav button{padding:10px 0}.fab{right:max(24px,calc(50% - 360px + 48px));bottom:28px}
+ #ov{align-items:center}#sh{border-radius:26px}
+ .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.two>.card{margin:0}
+}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav id="nav"></nav>
+<div id="fabw"></div>
+<div id="ov"><div id="sh"></div></div>
+<script src="jspdf.umd.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp=n=>(n<0?'−':'')+'Rp'+Math.abs(Math.round(n)).toLocaleString('id-ID');
+const uid=()=>Math.random().toString(36).slice(2,9);
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const DAYS=['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+const CATS={makan:['🍜','Makan'],kos:['🏠','Kos'],jalan:['🚌','Transport'],kuliah:['📚','Kuliah'],jajan:['🧋','Jajan'],lain:['💸','Lainnya'],gaji:['💰','Kiriman']};
+const KEY='kosthub-v1';
+let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[]};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let tab='home',sub='tugas',scanPages=[],files=[],CV={},onSave=null;
+const TABS=[['home','🏡','Beranda','#ffd84d'],['uang','🪙','Uang','#7be0a8'],['kuliah','📚','Kuliah','#8cc8ff'],['harian','🧺','Harian','#ffb48a'],['berkas','🗂️','Berkas','#c9a8ff']];
+const FABS={uang:'Catat transaksi',kuliah:'Tambah',harian:'Tambah kegiatan',berkas:'Tambah berkas'};
+
+let _db;const idb=()=>_db||(_db=new Promise((res,rej)=>{try{const q=indexedDB.open('kosthub',1);q.onupgradeneeded=()=>q.result.createObjectStore('files',{keyPath:'id'});q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)}catch(e){rej(e)}}));
+const tx=async(m,f)=>{const d=await idb();return new Promise((res,rej)=>{const t=d.transaction('files',m),r=f(t.objectStore('files'));t.oncomplete=()=>res(r.result);t.onerror=()=>rej(t.error)})};
+const fPut=o=>tx('readwrite',s=>s.put(o)),fAll=()=>tx('readonly',s=>s.getAll()),fDel=id=>tx('readwrite',s=>s.delete(id));
+const loadFiles=async()=>{try{files=(await fAll()).sort((a,b)=>b.date.localeCompare(a.date))}catch(e){files=[]}};
+const toast=t=>{const m=document.createElement('div');m.className='toast';m.textContent=t;document.body.appendChild(m);setTimeout(()=>m.remove(),2400)};
+const val=id=>($('#'+id)||{}).value||'';
+const bal=w=>w.init+S.tx.filter(t=>t.w===w.id).reduce((a,t)=>a+(t.type==='in'?t.amt:-t.amt),0);
+const empty=(e,t)=>`<div class="empty"><b>${e}</b>${t}</div>`;
+const fld=(id,l,type='text',ph='')=>`<label class="f"><span>${l}</span><input id="${id}" type="${type}" placeholder="${ph}" ${type==='number'?'inputmode="numeric"':''}></label>`;
+const chips=(g,list,def)=>{CV[g]=def;return `<div class="chips" data-g="${g}">${list.map(([v,l])=>`<button class="chip ${v===def?'on':''}" data-a="chip" data-g="${g}" data-v="${v}">${l}</button>`).join('')}</div>`};
+const todayIdx=()=>(new Date().getDay()+6)%7;
+
+function openSheet(title,html,label,fn){onSave=fn;$('#sh').innerHTML=`<div class="row" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="margin:0;font-size:21px">${title}</h2><button class="x" data-a="close">✕</button></div>${html}${label?`<button class="btn" style="width:100%;margin-top:6px" data-a="sv">${label}</button>`:''}`;$('#ov').classList.add('on')}
+const closeSheet=()=>{$('#ov').classList.remove('on');onSave=null};
+
+function vHome(){
+  const tot=S.wallets.reduce((a,w)=>a+bal(w),0),h=new Date().getHours();
+  const cls=S.classes.filter(c=>c.day===DAYS[todayIdx()]).sort((a,b)=>a.time.localeCompare(b.time));
+  const tk=S.tasks.filter(t=>!t.done).sort((a,b)=>(a.due||'9').localeCompare(b.due||'9')).slice(0,3);
+  const dn=S.rdone[today()]||[],rd=S.routine.filter(r=>dn.includes(r.id)).length,pc=S.routine.length?Math.round(rd/S.routine.length*100):0;
+  return `<div class="card a"><div class="mu">Total semua dompet</div><div class="big">${rp(tot)}</div><div class="mu">${S.wallets.length} dompet · pengeluaran bulan ini ${rp(S.tx.filter(t=>t.type==='out'&&t.date.startsWith(today().slice(0,7))).reduce((a,t)=>a+t.amt,0))}</div></div>
+  <div class="two"><div class="card"><h2>🎒 Kuliah hari ini</h2>${cls.length?cls.map(c=>`<div class="it"><div class="em">${esc(c.time)}</div><div class="b">${esc(c.name)}<div class="mu">${esc(c.room||'')}</div></div></div>`).join(''):empty('😴','Kosong! Waktunya rebahan')}</div>
+  <div class="card"><h2>⏰ Deadline terdekat</h2>${tk.length?tk.map(t=>`<div class="it"><div class="b">${esc(t.title)}<div class="mu ${t.due&&t.due<today()?'late':''}">${esc(t.due||'tanpa tenggat')}</div></div></div>`).join(''):empty('🎉','Tidak ada tugas nunggak')}</div></div>
+  <div class="card" style="margin-top:14px"><h2>🧺 Rutinitas hari ini</h2><div class="bar"><i style="width:${pc}%"></i></div><div class="mu" style="margin-top:6px">${S.routine.length?rd+' dari '+S.routine.length+' selesai':'Belum ada kegiatan, tambah di tab Harian'}</div></div>`}
+
+function vUang(){
+  const l=[...S.tx].reverse().slice(0,25).map(t=>{const w=S.wallets.find(x=>x.id===t.w),c=CATS[t.cat]||CATS.lain;return `<div class="it"><div class="em">${c[0]}</div><div class="b">${esc(t.note||c[1])}<div class="mu">${esc(w?w.name:'?')} · ${esc(t.date)}</div></div><b class="${t.type==='in'?'pos':'neg'}">${t.type==='in'?'+':'−'}${rp(t.amt).replace('−','')}</b><button class="x" data-a="dtx" data-id="${t.id}">✕</button></div>`}).join('')||empty('🪙','Belum ada catatan. Tekan + dulu!');
+  return `<div class="grid g3" style="margin-bottom:14px">${S.wallets.map(w=>`<div class="card wal"><div class="mu">${esc(w.name)}</div><b class="${bal(w)<0?'neg':''}">${rp(bal(w))}</b></div>`).join('')}<button class="btn g" data-a="nw" style="border-style:dashed;box-shadow:none">+ Dompet</button></div><div class="card"><h2>Riwayat</h2>${l}</div>`}
+
+function vKuliah(){
+  const seg=`<div class="seg"><button class="chip ${sub==='tugas'?'on':''}" data-a="sub" data-v="tugas">📝 Tugas</button><button class="chip ${sub==='jadwal'?'on':''}" data-a="sub" data-v="jadwal">🗓️ Jadwal</button></div>`;
+  if(sub==='tugas'){const l=[...S.tasks].sort((a,b)=>(a.done-b.done)||(a.due||'9').localeCompare(b.due||'9')).map(t=>{const late=!t.done&&t.due&&t.due<today();return `<div class="it"><input type="checkbox" class="ck" data-a="ttk" data-id="${t.id}" ${t.done?'checked':''}><div class="b ${t.done?'done':''}">${esc(t.title)}<div class="mu">${esc(t.course||'')}${t.course?' · ':''}<span class="${late?'late':''}">${esc(t.due||'tanpa tenggat')}${late?' · lewat!':''}</span></div></div><button class="x" data-a="dtk" data-id="${t.id}">✕</button></div>`}).join('');
+    return seg+`<div class="card">${l||empty('📝','Belum ada tugas. Aman!')}</div>`}
+  const l=DAYS.map((d,i)=>{const c=S.classes.filter(x=>x.day===d).sort((a,b)=>a.time.localeCompare(b.time));return c.length?`<div class="card"><h2>${d}${i===todayIdx()?' <span class="chip on" style="font-size:11px;padding:2px 8px">hari ini</span>':''}</h2>${c.map(x=>`<div class="it"><div class="em" style="font-size:12px">${esc(x.time)}</div><div class="b">${esc(x.name)}<div class="mu">${esc(x.room||'-')}</div></div><button class="x" data-a="dcl" data-id="${x.id}">✕</button></div>`).join('')}</div>`:''}).join('');
+  return seg+(l||`<div class="card">${empty('🗓️','Belum ada jadwal kuliah')}</div>`)}
+
+function vHarian(){
+  const dn=S.rdone[today()]||[],l=[...S.routine].sort((a,b)=>a.time.localeCompare(b.time)).map(r=>`<div class="it"><input type="checkbox" class="ck" data-a="trt" data-id="${r.id}" ${dn.includes(r.id)?'checked':''}><div class="b ${dn.includes(r.id)?'done':''}">${esc(r.text)}<div class="mu">${esc(r.time)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`).join('');
+  return `<div class="card"><h2>Hari ini</h2><div class="mu" style="margin-bottom:6px">Checklist reset otomatis tiap hari</div>${l||empty('🧺','Tambah kegiatan: masak, cuci baju, beresin kamar…')}</div>`}
+
+function vBerkas(){
+  const f=files.map(x=>`<div class="it"><div class="em">${x.cat==='Hasil scan'?'📷':x.cat==='Lampiran tugas'?'📎':'📖'}</div><div class="b">${esc(x.name)}<div class="mu">${esc(x.cat)}${x.course?' · '+esc(x.course):''} · ${(x.blob.size/1024).toFixed(0)} KB</div></div><button class="btn s g" data-a="dlf" data-id="${x.id}">Simpan</button><button class="x" data-a="dff" data-id="${x.id}">✕</button></div>`).join('')||empty('🗂️','Belum ada berkas');
+  const n=S.notes.map(x=>`<div class="it"><div class="b"><b>${esc(x.title)}</b><div class="mu" style="white-space:pre-wrap">${esc(x.body)}</div></div><button class="x" data-a="dn" data-id="${x.id}">✕</button></div>`).join('');
+  return `<div class="card"><h2>Berkas</h2>${f}</div>${n?`<div class="card"><h2>Catatan</h2>${n}</div>`:''}`}
+
+function scanBody(){return `<div class="mu">Foto kertasnya atau pilih dari galeri. Bisa banyak halaman jadi satu PDF.</div><div class="two" style="gap:8px;margin:10px 0"><input id="sc" type="file" accept="image/*" capture="environment"><input id="sg" type="file" accept="image/*" multiple></div><label class="mu" style="display:block"><input id="sm" type="checkbox" checked style="width:auto"> Mode dokumen (hitam-putih, lebih tajam)</label><div class="th">${scanPages.map((p,i)=>`<div><img src="${p.url}" alt="Halaman ${i+1}"><b data-a="dsp" data-i="${i}">✕</b></div>`).join('')}</div>${fld('sn','Nama PDF','text','Tugas Statistik')}${fld('sk','Mata kuliah (opsional)')}<button class="btn" style="width:100%" data-a="mkpdf" ${scanPages.length?'':'disabled'}>Buat PDF (${scanPages.length} hal)</button>`}
+function openScan(){scanPages=[];openSheet('📷 Scan jadi PDF','<div id="sb">'+scanBody()+'</div>')}
+
+async function render(){
+  const T=TABS.find(t=>t[0]===tab);document.body.style.setProperty('--a',T[3]);
+  if(tab==='berkas')await loadFiles();
+  const hr=new Date().getHours(),gr=hr<11?'Pagi':hr<15?'Siang':hr<18?'Sore':'Malam';
+  const ttl={home:`Selamat ${gr.toLowerCase()}, anak kost!`,uang:'Dompet',kuliah:'Kuliah',harian:'Rutinitas',berkas:'Berkas'}[tab];
+  const tm=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
+  $('#app').innerHTML=`<div class="top"><div class="mas">${['😎','🪙','🤓','🧺','🐱'][TABS.indexOf(T)]}</div><div><h1>${ttl}</h1><small>${tm}</small></div></div>`+{home:vHome,uang:vUang,kuliah:vKuliah,harian:vHarian,berkas:vBerkas}[tab]();
+  $('#nav').innerHTML=TABS.map(t=>`<button class="${t[0]===tab?'on':''}" data-a="tab" data-v="${t[0]}"><span>${t[1]}</span>${t[2]}</button>`).join('');
+  $('#fabw').innerHTML=FABS[tab]?`<button class="btn fab" data-a="fab" aria-label="${FABS[tab]}">+</button>`:'';
+}
+
+function fab(){
+  const wo=S.wallets.map(w=>`<option value="${esc(w.id)}">${esc(w.name)}</option>`).join('');
+  if(tab==='uang')openSheet('Catat transaksi',chips('tt',[['out','Keluar'],['in','Masuk']],'out')+`<div style="height:10px"></div><label class="f"><span>Dompet</span><select id="tw">${wo}</select></label>${fld('ta','Jumlah (Rp)','number','15000')}${fld('tn','Catatan','text','Nasi goreng')}<div class="mu" style="margin-bottom:4px">Kategori</div>${chips('tc',Object.entries(CATS).map(([k,v])=>[k,v[0]+' '+v[1]]),'makan')}<div style="height:14px"></div>`,'Simpan',()=>{const amt=+val('ta');if(!(amt>0))return toast('Isi jumlah dulu');S.tx.push({id:uid(),w:val('tw'),type:CV.tt,amt,note:val('tn').trim(),cat:CV.tt==='in'?'gaji':CV.tc,date:today()});return true});
+  else if(tab==='kuliah'&&sub==='tugas')openSheet('Tugas baru',fld('kt','Judul tugas','text','Laporan Basis Data')+fld('kc','Mata kuliah')+fld('kd','Deadline','date'),'Simpan',()=>{const t=val('kt').trim();if(!t)return toast('Isi judul dulu');S.tasks.push({id:uid(),title:t,course:val('kc').trim(),due:val('kd'),done:false});return true});
+  else if(tab==='kuliah')openSheet('Jadwal kuliah',`<label class="f"><span>Hari</span><select id="cd">${DAYS.map(d=>`<option ${d===DAYS[todayIdx()]?'selected':''}>${d}</option>`).join('')}</select></label>${fld('ct','Jam','time')}${fld('cn','Mata kuliah')}${fld('cr','Ruang')}`,'Simpan',()=>{const n=val('cn').trim();if(!n)return toast('Isi mata kuliah');S.classes.push({id:uid(),day:val('cd'),time:val('ct')||'00:00',name:n,room:val('cr').trim()});return true});
+  else if(tab==='harian')openSheet('Kegiatan baru',fld('rt','Jam','time')+fld('rx','Kegiatan','text','Cuci baju'),'Simpan',()=>{const t=val('rx').trim();if(!t)return toast('Isi kegiatan');S.routine.push({id:uid(),time:val('rt')||'07:00',text:t});return true});
+  else if(tab==='berkas')openSheet('Tambah berkas',`<div class="grid"><button class="btn g" data-a="up">📎 Upload file</button><button class="btn g" data-a="scan">📷 Scan jadi PDF</button><button class="btn g" data-a="note">📝 Catatan materi</button></div>`);
+}
+const upSheet=()=>openSheet('Upload file',`<label class="f"><span>Jenis</span><select id="fc"><option>Materi kuliah</option><option>Lampiran tugas</option><option>Lainnya</option></select></label>${fld('fk','Mata kuliah (opsional)')}<label class="f"><span>File</span><input id="ff" type="file" multiple></label>`,'Simpan',async()=>{const fs=[...$('#ff').files];if(!fs.length)return toast('Pilih file dulu');try{for(const f of fs)await fPut({id:uid(),name:f.name,cat:val('fc'),course:val('fk').trim(),date:today(),blob:f})}catch(e){toast('Penyimpanan browser penuh/gagal');return}return true});
+const noteSheet=()=>openSheet('Catatan materi',fld('nt','Judul')+`<label class="f"><span>Isi</span><textarea id="nb" rows="5"></textarea></label>`,'Simpan',()=>{const t=val('nt').trim();if(!t)return toast('Isi judul');S.notes.unshift({id:uid(),title:t,body:val('nb')});return true});
+
+function prep(file,doc){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;const x=c.getContext('2d');x.drawImage(im,0,0,c.width,c.height);if(doc){const d=x.getImageData(0,0,c.width,c.height),p=d.data;for(let i=0;i<p.length;i+=4){let g=.3*p[i]+.59*p[i+1]+.11*p[i+2];g=Math.max(0,Math.min(255,(g-110)*1.9+150));p[i]=p[i+1]=p[i+2]=g}x.putImageData(d,0,0)}URL.revokeObjectURL(u);res({url:c.toDataURL('image/jpeg',.82),w:c.width,h:c.height})};im.onerror=()=>rej();im.src=u})}
+async function saveOut(name,blob){const P=window.Capacitor&&Capacitor.Plugins;
+  try{if(P&&P.Filesystem&&P.Share){const b64=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(blob)});const w=await P.Filesystem.writeFile({path:name,data:b64,directory:'CACHE'});await P.Share.share({title:name,url:w.uri,dialogTitle:'Simpan atau kirim file'})}
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();toast('Terunduh ✓')}}
+  catch(e){if(!/cancel/i.test(String(e&&e.message)))toast('Gagal menyimpan file')}}
+
+document.addEventListener('change',async e=>{
+  const t=e.target,a=t.dataset.a;
+  if(a==='ttk'){S.tasks.find(x=>x.id===t.dataset.id).done=t.checked;save();if(t.checked)toast('Mantap, satu beres! 🎉');render()}
+  else if(a==='trt'){const d=S.rdone[today()]||[],id=t.dataset.id,i=d.indexOf(id);if(t.checked&&i<0)d.push(id);if(!t.checked&&i>=0)d.splice(i,1);S.rdone={[today()]:d};save();render()}
+  else if(t.id==='sc'||t.id==='sg'){for(const f of t.files){try{scanPages.push(await prep(f,$('#sm').checked))}catch(x){toast('Gambar gagal dibaca')}}$('#sb').innerHTML=scanBody()}
+});
+document.addEventListener('click',async e=>{
+  if(e.target.id==='ov')return closeSheet();
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const a=b.dataset.a,id=b.dataset.id,v=b.dataset.v;
+  if(a==='ttk'||a==='trt')return;
+  if(a==='tab'){tab=v;render();scrollTo(0,0);return}
+  if(a==='sub'){sub=v;render();return}
+  if(a==='close')return closeSheet();
+  if(a==='chip'){CV[b.dataset.g]=v;b.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===b));return}
+  if(a==='fab')return fab();
+  if(a==='up')return upSheet();if(a==='scan')return openScan();if(a==='note')return noteSheet();
+  if(a==='nw')return openSheet('Dompet baru',fld('wn','Nama','text','Dana, BCA…')+fld('wi','Saldo awal','number','0'),'Tambah',()=>{const n=val('wn').trim();if(!n)return toast('Isi nama');S.wallets.push({id:uid(),name:n,init:+val('wi')||0});return true});
+  if(a==='sv'){if(onSave&&await onSave()){save();closeSheet();render()}return}
+  if(a==='dsp'){scanPages.splice(+b.dataset.i,1);$('#sb').innerHTML=scanBody();return}
+  if(a==='mkpdf'){if(!window.jspdf)return toast('Library PDF belum termuat');const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:'mm',format:'a4'});
+    scanPages.forEach((p,i)=>{if(i)pdf.addPage();const r=Math.min(200/p.w,287/p.h),w=p.w*r,h=p.h*r;pdf.addImage(p.url,'JPEG',(210-w)/2,(297-h)/2,w,h)});
+    const nm=(val('sn').trim()||'Scan '+today()).replace(/[\\/:*?"<>|]/g,'-');
+    try{await fPut({id:uid(),name:nm+'.pdf',cat:'Hasil scan',course:val('sk').trim(),date:today(),blob:pdf.output('blob')})}catch(x){return toast('Gagal menyimpan PDF')}
+    scanPages=[];closeSheet();tab='berkas';toast('PDF tersimpan 📄');render();return}
+  if(a==='dlf'){const f=files.find(x=>x.id===id);if(f)saveOut(f.name,f.blob);return}
+  if(a==='dff'){await fDel(id);return render()}
+  if(a==='dtx')S.tx=S.tx.filter(x=>x.id!==id);
+  else if(a==='dtk')S.tasks=S.tasks.filter(x=>x.id!==id);
+  else if(a==='dcl')S.classes=S.classes.filter(x=>x.id!==id);
+  else if(a==='drt')S.routine=S.routine.filter(x=>x.id!==id);
+  else if(a==='dn')S.notes=S.notes.filter(x=>x.id!==id);
+  save();render();
+});
+render();
+</script>
+</body>
+</html>
