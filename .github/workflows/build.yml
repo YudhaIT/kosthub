@@ -28,6 +28,7 @@ jobs:
           sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <application#' android/app/src/main/AndroidManifest.xml
       - name: Buat ikon (boleh gagal)
         continue-on-error: true
+        if: false
         run: |
           mkdir -p assets
           cp icon.png assets/icon-only.png
