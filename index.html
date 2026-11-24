@@ -97,6 +97,8 @@ nav button.on span{animation:hop .45s}
 #cs{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hd{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;background:var(--a);border:3px solid #fff;box-shadow:0 2px 10px #000a;touch-action:none}
 .fl{display:flex;gap:8px;justify-content:center;padding:8px;background:#000a;position:relative;z-index:2;overflow-x:auto}
+.adj{display:none;position:relative;z-index:2;background:#000c;padding:8px 16px}.adj.on{display:block}
+.adj label{display:flex;align-items:center;gap:10px;font-weight:800;font-size:13px;margin:4px 0}.adj label span{width:88px}.adj input{flex:1;accent-color:var(--a)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -119,6 +121,7 @@ const KEY='kosthub-v1';
 let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[]};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const DS=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];let hsub='hari';
 let tab='home',sub='tugas',scanPages=[],files=[],CV={},onSave=null;
 const TABS=[['home','🏡','Beranda','#ffd84d'],['uang','🪙','Uang','#7be0a8'],['kuliah','📚','Kuliah','#8cc8ff'],['harian','🧺','Harian','#ffb48a'],['berkas','🗂️','Berkas','#c9a8ff']];
 const FABS={uang:'Catat transaksi',kuliah:'Tambah',harian:'Tambah kegiatan',berkas:'Tambah berkas'};
@@ -142,11 +145,11 @@ function vHome(){
   const tot=S.wallets.reduce((a,w)=>a+bal(w),0),h=new Date().getHours();
   const cls=S.classes.filter(c=>c.day===DAYS[todayIdx()]).sort((a,b)=>a.time.localeCompare(b.time));
   const tk=S.tasks.filter(t=>!t.done).sort((a,b)=>(a.due||'9').localeCompare(b.due||'9')).slice(0,3);
-  const dn=S.rdone[today()]||[],rd=S.routine.filter(r=>dn.includes(r.id)).length,pc=S.routine.length?Math.round(rd/S.routine.length*100):0;
+  const dn=S.rdone[today()]||[],rtd=rToday(),rd=rtd.filter(r=>dn.includes(r.id)).length,pc=rtd.length?Math.round(rd/rtd.length*100):0;
   return `<div class="card a"><div class="mu">Total semua dompet</div><div class="big" data-n="${tot}">${rp(tot)}</div><div class="mu">${S.wallets.length} dompet · pengeluaran bulan ini ${rp(S.tx.filter(t=>t.type==='out'&&t.date.startsWith(today().slice(0,7))).reduce((a,t)=>a+t.amt,0))}</div></div>
   <div class="two"><div class="card"><h2>🎒 Kuliah hari ini</h2>${cls.length?cls.map(c=>`<div class="it"><div class="em">${esc(c.time)}</div><div class="b">${esc(c.name)}<div class="mu">${esc(c.room||'')}</div></div></div>`).join(''):empty('😴','Kosong! Waktunya rebahan')}</div>
   <div class="card"><h2>⏰ Deadline terdekat</h2>${tk.length?tk.map(t=>`<div class="it"><div class="b">${esc(t.title)}<div class="mu ${t.due&&t.due<today()?'late':''}">${esc(t.due||'tanpa tenggat')}</div></div></div>`).join(''):empty('🎉','Tidak ada tugas nunggak')}</div></div>
-  <div class="card" style="margin-top:14px"><h2>🧺 Rutinitas hari ini</h2><div class="bar"><i style="width:${pc}%"></i></div><div class="mu" style="margin-top:6px">${S.routine.length?rd+' dari '+S.routine.length+' selesai':'Belum ada kegiatan, tambah di tab Harian'}</div></div>`}
+  <div class="card" style="margin-top:14px"><h2>🧺 Rutinitas hari ini</h2><div class="bar"><i style="width:${pc}%"></i></div><div class="mu" style="margin-top:6px">${rtd.length?rd+' dari '+rtd.length+' selesai':'Tidak ada kegiatan hari ini'}</div></div>`}
 
 function vUang(){
   const l=[...S.tx].reverse().slice(0,25).map(t=>{const w=S.wallets.find(x=>x.id===t.w),c=CATS[t.cat]||CATS.lain;return `<div class="it"><div class="em">${c[0]}</div><div class="b">${esc(t.note||c[1])}<div class="mu">${esc(w?w.name:'?')} · ${esc(t.date)}</div></div><b class="${t.type==='in'?'pos':'neg'}">${t.type==='in'?'+':'−'}${rp(t.amt).replace('−','')}</b><button class="x" data-a="dtx" data-id="${t.id}">✕</button></div>`}).join('')||empty('🪙','Belum ada catatan. Tekan + dulu!');
@@ -159,9 +162,12 @@ function vKuliah(){
   const l=DAYS.map((d,i)=>{const c=S.classes.filter(x=>x.day===d).sort((a,b)=>a.time.localeCompare(b.time));return c.length?`<div class="card"><h2>${d}${i===todayIdx()?' <span class="chip on" style="font-size:11px;padding:2px 8px">hari ini</span>':''}</h2>${c.map(x=>`<div class="it"><div class="em" style="font-size:12px">${esc(x.time)}</div><div class="b">${esc(x.name)}<div class="mu">${esc(x.room||'-')}</div></div><button class="x" data-a="dcl" data-id="${x.id}">✕</button></div>`).join('')}</div>`:''}).join('');
   return seg+(l||`<div class="card">${empty('🗓️','Belum ada jadwal kuliah')}</div>`)}
 
-function vHarian(){
-  const dn=S.rdone[today()]||[],l=[...S.routine].sort((a,b)=>a.time.localeCompare(b.time)).map(r=>`<div class="it"><input type="checkbox" class="ck" data-a="trt" data-id="${r.id}" ${dn.includes(r.id)?'checked':''}><div class="b ${dn.includes(r.id)?'done':''}">${esc(r.text)}<div class="mu">${esc(r.time)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`).join('');
-  return `<div class="card"><h2>Hari ini</h2><div class="mu" style="margin-bottom:6px">Checklist reset otomatis tiap hari</div>${l||empty('🧺','Tambah kegiatan: masak, cuci baju, beresin kamar…')}</div>`}
+const dayTag=r=>!r.days||r.days.length===7?'Setiap hari':r.days.map(i=>DS[i]).join(' ');
+const rToday=()=>S.routine.filter(r=>!r.days||r.days.includes(todayIdx()));
+function vHarian(){const dn=S.rdone[today()]||[],ti=todayIdx(),all=hsub==='semua',list=(all?[...S.routine]:rToday()).sort((a,b)=>a.time.localeCompare(b.time));
+  const seg=`<div class="seg"><button class="chip ${!all?'on':''}" data-a="hsub" data-v="hari">☀️ Hari ini</button><button class="chip ${all?'on':''}" data-a="hsub" data-v="semua">📅 Semua hari</button></div>`;
+  const l=list.map(r=>all?`<div class="it"><div class="em" style="font-size:12px">${esc(r.time)}</div><div class="b">${esc(r.text)}<div class="mu">${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`:`<div class="it"><input type="checkbox" class="ck" data-a="trt" data-id="${r.id}" ${dn.includes(r.id)?'checked':''}><div class="b ${dn.includes(r.id)?'done':''}">${esc(r.text)}<div class="mu">${esc(r.time)} · ${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`).join('');
+  return seg+`<div class="card"><h2>${all?'Semua kegiatan':DAYS[ti]}</h2>${all?'':'<div class="mu" style="margin-bottom:6px">Checklist reset otomatis tiap hari</div>'}${l||empty('🧺',all?'Belum ada kegiatan':'Hari ini kosong. Tekan + buat nambah')}</div>`}
 
 function vBerkas(){
   const f=files.map(x=>`<div class="it"><div class="em">${x.cat==='Hasil scan'?'📷':x.cat==='Lampiran tugas'?'📎':'📖'}</div><div class="b">${esc(x.name)}<div class="mu">${esc(x.cat)}${x.course?' · '+esc(x.course):''} · ${(x.blob.size/1024).toFixed(0)} KB</div></div><button class="btn s g" data-a="dlf" data-id="${x.id}">Simpan</button><button class="x" data-a="dff" data-id="${x.id}">✕</button></div>`).join('')||empty('🗂️','Belum ada berkas');
@@ -175,7 +181,7 @@ async function render(an){
   const T=TABS.find(t=>t[0]===tab);document.body.style.setProperty('--a',T[3]);
   if(tab==='berkas')await loadFiles();
   const hr=new Date().getHours(),gr=hr<11?'Pagi':hr<15?'Siang':hr<18?'Sore':'Malam';
-  const ttl={home:`Selamat ${gr.toLowerCase()}, Yudd!`,uang:'Dompet',kuliah:'Kuliah',harian:'Rutinitas',berkas:'Berkas'}[tab];
+  const ttl={home:`Selamat ${gr.toLowerCase()}, anak kost!`,uang:'Dompet',kuliah:'Kuliah',harian:'Rutinitas',berkas:'Berkas'}[tab];
   const tm=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
   $('#app').innerHTML=`<div class="top"><div class="mas">${['😎','🪙','🤓','🧺','🐱'][TABS.indexOf(T)]}</div><div><h1>${ttl}</h1><small>${tm}</small></div></div>`+{home:vHome,uang:vUang,kuliah:vKuliah,harian:vHarian,berkas:vBerkas}[tab]();
   $('#nav').innerHTML=TABS.map(t=>`<button class="${t[0]===tab?'on':''}" data-a="tab" data-v="${t[0]}"><span>${t[1]}</span>${t[2]}</button>`).join('');
@@ -188,7 +194,7 @@ function fab(){
   if(tab==='uang')openSheet('Catat transaksi',chips('tt',[['out','Keluar'],['in','Masuk']],'out')+`<div style="height:10px"></div><label class="f"><span>Dompet</span><select id="tw">${wo}</select></label>${fld('ta','Jumlah (Rp)','number','15000')}${fld('tn','Catatan','text','Nasi goreng')}<div class="mu" style="margin-bottom:4px">Kategori</div>${chips('tc',Object.entries(CATS).map(([k,v])=>[k,v[0]+' '+v[1]]),'makan')}<div style="height:14px"></div>`,'Simpan',()=>{const amt=+val('ta');if(!(amt>0))return toast('Isi jumlah dulu');S.tx.push({id:uid(),w:val('tw'),type:CV.tt,amt,note:val('tn').trim(),cat:CV.tt==='in'?'gaji':CV.tc,date:today()});return true});
   else if(tab==='kuliah'&&sub==='tugas')openSheet('Tugas baru',fld('kt','Judul tugas','text','Laporan Basis Data')+fld('kc','Mata kuliah')+fld('kd','Deadline','date'),'Simpan',()=>{const t=val('kt').trim();if(!t)return toast('Isi judul dulu');S.tasks.push({id:uid(),title:t,course:val('kc').trim(),due:val('kd'),done:false});return true});
   else if(tab==='kuliah')openSheet('Jadwal kuliah',`<label class="f"><span>Hari</span><select id="cd">${DAYS.map(d=>`<option ${d===DAYS[todayIdx()]?'selected':''}>${d}</option>`).join('')}</select></label>${fld('ct','Jam','time')}${fld('cn','Mata kuliah')}${fld('cr','Ruang')}`,'Simpan',()=>{const n=val('cn').trim();if(!n)return toast('Isi mata kuliah');S.classes.push({id:uid(),day:val('cd'),time:val('ct')||'00:00',name:n,room:val('cr').trim()});return true});
-  else if(tab==='harian')openSheet('Kegiatan baru',fld('rt','Jam','time')+fld('rx','Kegiatan','text','Cuci baju'),'Simpan',()=>{const t=val('rx').trim();if(!t)return toast('Isi kegiatan');S.routine.push({id:uid(),time:val('rt')||'07:00',text:t});return true});
+  else if(tab==='harian')openSheet('Kegiatan baru',fld('rt','Jam','time')+fld('rx','Kegiatan','text','Cuci baju')+'<div class="mu" style="margin:4px 0">Hari apa saja?</div><div class="chips" id="dys">'+DS.map((d,i)=>`<button class="chip dc on" data-a="dchip" data-i="${i}">${d}</button>`).join('')+'</div><div style="height:12px"></div>','Simpan',()=>{const t=val('rx').trim();if(!t)return toast('Isi kegiatan');const days=[...document.querySelectorAll('#dys .dc.on')].map(e=>+e.dataset.i);if(!days.length)return toast('Pilih minimal satu hari');S.routine.push({id:uid(),time:val('rt')||'07:00',text:t,days});return true});
   else if(tab==='berkas')openSheet('Tambah berkas',`<div class="grid"><button class="btn g" data-a="up">📎 Upload file</button><button class="btn g" data-a="scan">📷 Scan jadi PDF</button><button class="btn g" data-a="note">📝 Catatan materi</button></div>`);
 }
 const upSheet=()=>openSheet('Upload file',`<label class="f"><span>Jenis</span><select id="fc"><option>Materi kuliah</option><option>Lampiran tugas</option><option>Lainnya</option></select></label>${fld('fk','Mata kuliah (opsional)')}<label class="f"><span>File</span><input id="ff" type="file" multiple></label>`,'Simpan',async()=>{const fs=[...$('#ff').files];if(!fs.length)return toast('Pilih file dulu');try{for(const f of fs)await fPut({id:uid(),name:f.name,cat:val('fc'),course:val('fk').trim(),date:today(),blob:f})}catch(e){toast('Penyimpanan browser penuh/gagal');return}return true});
@@ -215,6 +221,8 @@ document.addEventListener('click',async e=>{
   if(a[0]==='z')return zAct(a,b);
   if(a==='tab'){tab=v;render(1);scrollTo(0,0);return}
   if(a==='sub'){sub=v;render();return}
+  if(a==='hsub'){hsub=v;render();return}
+  if(a==='dchip'){b.classList.toggle('on');return}
   if(a==='close')return closeSheet();
   if(a==='chip'){CV[b.dataset.g]=v;b.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===b));return}
   if(a==='fab')return fab();
@@ -241,7 +249,7 @@ function conf(x,y,e=['🎉','✨','⭐','💖','🍀']){for(let i=0;i<12;i++){co
 function anim(){const a=$('#app');a.classList.add('anim');setTimeout(()=>a.classList.remove('anim'),900);document.querySelectorAll('.big[data-n]').forEach(el=>{const n=+el.dataset.n,t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/800);el.textContent=rp(n*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)})}
 
 /* ===== Scanner ala CamScanner ===== */
-let SC={pages:[],q:[],img:null,pts:[],base:null,filter:'warna',stream:null},drag=-1;
+let SC={pages:[],q:[],img:null,pts:[],base:null,filter:'warna',stream:null,adj:{b:0,k:50,t:45},fo:null,rq:0},drag=-1;
 const sct=()=>$('#scn'),cnv=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
 const stopCam=()=>{if(SC.stream){SC.stream.getTracks().forEach(t=>t.stop());SC.stream=null}};
 const rot90=c=>{const o=cnv(c.height,c.width),x=o.getContext('2d');x.translate(o.width,0);x.rotate(Math.PI/2);x.drawImage(c,0,0);return o};
@@ -261,9 +269,10 @@ function cropPaint(){SC.pts.forEach(([x,y],i)=>{const h=sct().querySelector(`.hd
 document.addEventListener('pointerdown',e=>{const h=e.target.closest&&e.target.closest('.hd');if(h){drag=+h.dataset.i;h.setPointerCapture(e.pointerId)}});
 document.addEventListener('pointermove',e=>{if(drag<0)return;const r=$('#cwi').getBoundingClientRect(),cl=v=>Math.min(1,Math.max(0,v));SC.pts[drag]=[cl((e.clientX-r.left)/r.width),cl((e.clientY-r.top)/r.height)];cropPaint()});
 document.addEventListener('pointerup',()=>drag=-1);
-function scFilter(){const F=[['asli','Asli'],['warna','Warna'],['bw','Dokumen'],['abu','Abu-abu']];
-  sct().innerHTML=tb('<button class="sb" data-a="zrecrop">↩</button>','Pilih filter','<button class="sb" data-a="zrot2">⟳</button>')+`<div id="cw"><div id="cwi"><canvas id="fv"></canvas></div></div><div class="fl">${F.map(([k,l])=>`<button class="sb" data-a="zf" data-v="${k}">${l}</button>`).join('')}</div><div class="scBot"><button class="btn" style="width:100%" data-a="zsv">Simpan halaman ✓</button></div>`;fvPaint()}
-function fvPaint(){const o=filt(SC.base,SC.filter),f=$('#fv');f.width=o.width;f.height=o.height;f.getContext('2d').drawImage(o,0,0);fit(o);document.querySelectorAll('.fl .sb').forEach(b=>b.classList.toggle('on',b.dataset.v===SC.filter))}
+function scFilter(){const F=[['asli','Asli'],['warna','Warna'],['bw','Dokumen'],['abu','Abu-abu']],A=SC.adj;
+  sct().innerHTML=tb('<button class="sb" data-a="zrecrop">↩</button>','Pilih filter','<button class="sb" data-a="zrot2">⟳</button>')+`<div id="cw"><div id="cwi"><canvas id="fv"></canvas></div></div><div class="adj" id="adj"><label><span>☀️ Kecerahan</span><input type="range" id="rb" min="-50" max="50" value="${A.b}"></label><label><span>◐ Kontras</span><input type="range" id="rk" min="0" max="100" value="${A.k}"></label><label><span>✒️ Tebal teks</span><input type="range" id="rt2" min="0" max="100" value="${A.t}"></label><button class="sb" data-a="zreset" style="padding:5px 12px;font-size:12px">Reset</button></div><div class="fl">${F.map(([k,l])=>`<button class="sb" data-a="zf" data-v="${k}">${l}</button>`).join('')}<button class="sb" data-a="zadj">🎚️ Atur</button></div><div class="scBot"><button class="btn" style="width:100%" data-a="zsv">Simpan halaman ✓</button></div>`;fvPaint()}
+function fvPaint(){const o=filt(SC.base,SC.filter,SC.adj),f=$('#fv');SC.fo=o;f.width=o.width;f.height=o.height;f.getContext('2d').drawImage(o,0,0);fit(o);document.querySelectorAll('.fl [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===SC.filter))}
+document.addEventListener('input',e=>{const m={rb:'b',rk:'k',rt2:'t'}[e.target.id];if(!m)return;SC.adj[m]=+e.target.value;if(!SC.rq){SC.rq=1;requestAnimationFrame(()=>{SC.rq=0;fvPaint()})}});
 function zAct(a,b){switch(a){
   case 'zx':closeScn();break;
   case 'zd':closeScn();scanPages=SC.pages;openSheet('Simpan jadi PDF','<div id="sb">'+scanBody()+'</div>');break;
@@ -274,9 +283,11 @@ function zAct(a,b){switch(a){
   case 'zrot':SC.img=rot90(SC.img);SC.pts=detect(SC.img);scCrop();break;
   case 'zgo':SC.base=warp(SC.img,SC.pts);SC.filter='warna';scFilter();break;
   case 'zrecrop':scCrop();break;
+  case 'zadj':$('#adj').classList.toggle('on');if(SC.fo)fit(SC.fo);break;
+  case 'zreset':SC.adj={b:0,k:50,t:45};$('#rb').value=0;$('#rk').value=50;$('#rt2').value=45;fvPaint();break;
   case 'zrot2':SC.base=rot90(SC.base);fvPaint();break;
   case 'zf':SC.filter=b.dataset.v;fvPaint();break;
-  case 'zsv':{const o=filt(SC.base,SC.filter);SC.pages.push({url:o.toDataURL('image/jpeg',.85),w:o.width,h:o.height});toast('Halaman '+SC.pages.length+' tersimpan ✓');conf(innerWidth/2,innerHeight/2);SC.q.length?scNext():scCam();break}}}
+  case 'zsv':{const o=filt(SC.base,SC.filter,SC.adj);SC.pages.push({url:o.toDataURL('image/jpeg',.85),w:o.width,h:o.height});toast('Halaman '+SC.pages.length+' tersimpan ✓');conf(innerWidth/2,innerHeight/2);SC.q.length?scNext():scCam();break}}}
 // deteksi kertas: Otsu + komponen terang terbesar + 4 sudut ekstrem
 function detect(c){const w=Math.min(160,c.width),h=Math.max(1,Math.round(c.height*w/c.width)),t=cnv(w,h);t.getContext('2d').drawImage(c,0,0,w,h);const d=t.getContext('2d').getImageData(0,0,w,h).data,N=w*h,g=new Uint8Array(N),hs=new Array(256).fill(0);
   for(let i=0;i<N;i++){const v=(.3*d[i*4]+.59*d[i*4+1]+.11*d[i*4+2])|0;g[i]=v;hs[v]++}
@@ -297,12 +308,20 @@ function warp(c,n){const W=c.width,H=c.height,q=n.map(([x,y])=>[x*W,y*H]),ds=(a,
   for(let j=0;j<oh;j++){const v=j/oh;for(let i=0;i<ow;i++){const u=i/ow,z=g*u+h*v+1,sx=(a*u+b*v+x0)/z,sy=(dd*u+e*v+y0)/z,ix=Math.min(W-2,Math.max(0,sx|0)),iy=Math.min(H-2,Math.max(0,sy|0)),fx=Math.min(1,Math.max(0,sx-ix)),fy=Math.min(1,Math.max(0,sy-iy)),s=(iy*W+ix)*4,t=(i+j*ow)*4;
     for(let ch=0;ch<3;ch++)p[t+ch]=(sd[s+ch]*(1-fx)+sd[s+4+ch]*fx)*(1-fy)+(sd[s+W*4+ch]*(1-fx)+sd[s+W*4+4+ch]*fx)*fy;p[t+3]=255}}
   ox.putImageData(od,0,0);return o}
-// filter: hilangkan bayangan dengan membagi dengan estimasi latar
-function filt(c,m){const w=c.width,h=c.height,o=cnv(w,h),x=o.getContext('2d');x.drawImage(c,0,0);if(m==='asli')return o;
-  const id=x.getImageData(0,0,w,h),p=id.data,n=w*h*4,cl=v=>v<0?0:v>255?255:v;
-  if(m==='abu'){for(let i=0;i<n;i+=4){const g=cl((.3*p[i]+.59*p[i+1]+.11*p[i+2]-128)*1.25+138);p[i]=p[i+1]=p[i+2]=g}}
-  else{const s=cnv(Math.max(1,w>>4),Math.max(1,h>>4));s.getContext('2d').drawImage(c,0,0,s.width,s.height);const b=cnv(w,h),bx=b.getContext('2d');bx.imageSmoothingQuality='high';bx.drawImage(s,0,0,w,h);const q=bx.getImageData(0,0,w,h).data;
-    for(let i=0;i<n;i+=4){if(m==='bw'){const g=.3*p[i]+.59*p[i+1]+.11*p[i+2],bg=.3*q[i]+.59*q[i+1]+.11*q[i+2]+1,v=cl((g/bg-.68)/.24*255);p[i]=p[i+1]=p[i+2]=v}else for(let k=0;k<3;k++)p[i+k]=cl((p[i+k]/(q[i+k]+1)-.55)/.4*255)}}
+// filter ala CamScanner: latar diestimasi dari piksel TERTERANG per blok (bukan rata-rata), teks dipertebal lalu dikontraskan
+function bgOf(c){if(c._bg)return c._bg;const w=c.width,h=c.height,B=12,sw=Math.ceil(w/B),sh=Math.ceil(h/B),d=c.getContext('2d').getImageData(0,0,w,h).data,s=cnv(sw,sh),sx=s.getContext('2d'),si=sx.createImageData(sw,sh),sp=si.data;
+  for(let by=0;by<sh;by++)for(let bx=0;bx<sw;bx++){let r=0,g=0,b=0;for(let y=by*B;y<Math.min(h,by*B+B);y+=2)for(let x=bx*B;x<Math.min(w,bx*B+B);x+=2){const i=(y*w+x)*4;if(d[i]>r)r=d[i];if(d[i+1]>g)g=d[i+1];if(d[i+2]>b)b=d[i+2]}const o=(by*sw+bx)*4;sp[o]=r;sp[o+1]=g;sp[o+2]=b;sp[o+3]=255}
+  sx.putImageData(si,0,0);const big=cnv(w,h),bx2=big.getContext('2d');bx2.imageSmoothingQuality='high';bx2.drawImage(s,0,0,w,h);return c._bg=bx2.getImageData(0,0,w,h).data}
+function dil(a,w,h,k){const t=new Float32Array(a.length);for(let y=0;y<h;y++){const r=y*w;for(let x=0;x<w;x++){const i=r+x;let m=a[i];if(x>0&&a[i-1]<m)m=a[i-1];if(x<w-1&&a[i+1]<m)m=a[i+1];t[i]=m}}
+  for(let y=0;y<h;y++){const r=y*w;for(let x=0;x<w;x++){const i=r+x;let m=t[i];if(y>0&&t[i-w]<m)m=t[i-w];if(y<h-1&&t[i+w]<m)m=t[i+w];a[i]=a[i]*(1-k)+m*k}}}
+function filt(c,m,A){A=A||SC.adj;const w=c.width,h=c.height,o=cnv(w,h),x=o.getContext('2d');x.drawImage(c,0,0);if(m==='asli'&&A.b===0&&A.k===50)return o;
+  const id=x.getImageData(0,0,w,h),p=id.data,N=w*h,cl=v=>v<0?0:v>255?255:v;
+  if(m==='asli'){const kf=.5+A.k/100;for(let i=0;i<N*4;i+=4)for(let k=0;k<3;k++)p[i+k]=cl((p[i+k]-128)*kf+128+A.b*2)}
+  else{const q=bgOf(c),ch=m==='warna'?3:1,R=[];for(let k=0;k<ch;k++)R.push(new Float32Array(N));
+    for(let i=0,j=0;j<N;i+=4,j++){if(ch===1)R[0][j]=(.3*p[i]+.59*p[i+1]+.11*p[i+2])/(.3*q[i]+.59*q[i+1]+.11*q[i+2]+1);else{R[0][j]=p[i]/(q[i]+1);R[1][j]=p[i+1]/(q[i+1]+1);R[2][j]=p[i+2]/(q[i+2]+1)}}
+    const a=A.t/100*.85;if(a>0)R.forEach(r=>dil(r,w,h,a));
+    let hw=Math.max(.06,.25-(A.k-50)*.003);if(m==='abu')hw*=1.8;const c0=.58-A.b*.004,lo=c0-hw,sp=2*hw;
+    for(let i=0,j=0;j<N;i+=4,j++)for(let k=0;k<3;k++){let t=(R[ch===1?0:k][j]-lo)/sp;t=t<0?0:t>1?1:t;p[i+k]=t*t*(3-2*t)*255}}
   x.putImageData(id,0,0);return o}
 render(1);
 </script>
