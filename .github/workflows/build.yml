@@ -25,15 +25,32 @@ jobs:
           cp index.html www/index.html
           cp node_modules/jspdf/dist/jspdf.umd.min.js www/
           npx cap add android
-          sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <application#' android/app/src/main/AndroidManifest.xml
-      - name: Buat ikon (boleh gagal)
+          sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <application#' android/app/src/main/AndroidManifest.xml
+      - name: Pasang ikon
         continue-on-error: true
-        if: false
         run: |
-          mkdir -p assets
-          cp icon.png assets/icon-only.png
-          cp icon-fg.png assets/icon-foreground.png
-          npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#ffd84d' --iconBackgroundColorDark '#ffd84d'
+          python3 -m pip install --break-system-packages pillow
+          python3 - <<'PY'
+          from PIL import Image, ImageDraw
+          import os
+          res='android/app/src/main/res'
+          leg={'mdpi':48,'hdpi':72,'xhdpi':96,'xxhdpi':144,'xxxhdpi':192}
+          fgs={'mdpi':108,'hdpi':162,'xhdpi':216,'xxhdpi':324,'xxxhdpi':432}
+          ic=Image.open('icon.png').convert('RGBA'); fg=Image.open('icon-fg.png').convert('RGBA')
+          for d in leg:
+              dr=res+'/mipmap-'+d
+              os.makedirs(dr,exist_ok=True)
+              a=ic.resize((leg[d],leg[d]),Image.LANCZOS)
+              a.save(dr+'/ic_launcher.png')
+              m=Image.new('L',a.size,0)
+              ImageDraw.Draw(m).ellipse((0,0,a.size[0]-1,a.size[1]-1),fill=255)
+              r=Image.new('RGBA',a.size,(0,0,0,0))
+              r.paste(a,(0,0),m)
+              r.save(dr+'/ic_launcher_round.png')
+              fg.resize((fgs[d],fgs[d]),Image.LANCZOS).save(dr+'/ic_launcher_foreground.png')
+          open(res+'/values/ic_launcher_background.xml','w').write('<?xml version="1.0" encoding="utf-8"?><resources><color name="ic_launcher_background">#FFD84D</color></resources>')
+          print('ICON OK')
+          PY
       - name: Build APK
         run: |
           npx cap sync android
