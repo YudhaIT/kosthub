@@ -24,6 +24,10 @@ jobs:
           cp index.html www/index.html
           cp node_modules/jspdf/dist/jspdf.umd.min.js www/
           npx cap add android
+          mkdir -p assets
+          cp icon.png assets/icon-only.png
+          cp icon-fg.png assets/icon-foreground.png
+          npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#ffd84d' --iconBackgroundColorDark '#ffd84d'
           sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <application#' android/app/src/main/AndroidManifest.xml
           npx cap sync android
           cd android && chmod +x gradlew && ./gradlew assembleDebug
