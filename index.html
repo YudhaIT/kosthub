@@ -50,7 +50,7 @@ nav button.on{background:var(--a);color:var(--on);border-color:var(--bd)}
 .fab{position:fixed;right:max(16px,calc(50% - 340px));bottom:calc(92px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;font-size:30px;line-height:1;padding:0;z-index:4}
 #ov{position:fixed;inset:0;background:#2b211888;display:none;align-items:flex-end;justify-content:center;z-index:20}
 #ov.on{display:flex}
-#sh{background:var(--card);border:2px solid var(--bd);border-radius:26px 26px 0 0;width:100%;max-width:520px;max-height:90vh;overflow:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));animation:up .25s ease-out}
+#sh{background:var(--card);border:2px solid var(--bd);border-radius:26px 26px 0 0;width:100%;max-width:520px;max-height:calc(100% - 16px);overflow:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));animation:up .25s ease-out}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
 .th{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px}.th div{position:relative;flex:0 0 auto}
 .th img{height:100px;border-radius:10px;border:2px solid var(--bd);display:block}
@@ -106,10 +106,41 @@ nav button.on span{animation:hop .45s}
 .gb{width:48px;height:48px;border-radius:14px;border:2px solid var(--bd);background:var(--a);color:#2b2118;font:700 18px ui-rounded,system-ui,sans-serif;box-shadow:2px 2px 0 var(--shc);cursor:pointer}.gb:active{transform:translate(2px,2px);box-shadow:none}
 .bc{cursor:pointer}.bc:active{transform:scale(.98)}.bar.yel i{background:#ffc83d}.bar.red i{background:var(--er)}.bar{margin-top:8px}
 .bs{gap:4px}.bs .chip{padding:7px 2px;font-size:12px}.bs small{opacity:.6}
+.mas{background:none;border:0;box-shadow:none;width:54px;height:54px;display:block}.msv{overflow:visible;display:block}
+.msv .eyes{transform-box:fill-box;transform-origin:50% 50%;animation:blink 4.5s infinite}@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.gear{margin-left:auto;width:42px;height:42px;border-radius:14px;border:2px solid var(--bd);background:var(--card);box-shadow:2px 2px 0 var(--shc);font-size:18px;cursor:pointer}.gear:active{transform:translate(2px,2px);box-shadow:none}
+.toast{z-index:120}.cf{z-index:130}
+.sw{display:flex;gap:10px;margin:8px 0 12px;flex-wrap:wrap}.swb{width:38px;height:38px;border-radius:50%;border:2px solid var(--bd);cursor:pointer;transition:transform .15s}.swb.on{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--bd);transform:scale(1.12)}
+.dots2{display:inline-flex;vertical-align:middle}.dots2 b{width:10px;height:10px;border-radius:50%;margin-right:-3px;border:1px solid var(--bd)}
+#lock{position:fixed;inset:0;z-index:90;background:var(--bg) radial-gradient(var(--dot) 1.3px,transparent 1.3px) 0 0/20px 20px;display:none;align-items:center;justify-content:center}#lock.on{display:flex;animation:fd .25s}
+.lk{text-align:center;width:min(310px,84vw)}.lkm{display:inline-block;animation:bob 3s ease-in-out infinite}
+.pd{display:flex;justify-content:center;gap:14px;margin:14px 0 22px}.pd i{width:18px;height:18px;border-radius:50%;border:2px solid var(--bd);background:var(--card)}.pd i.on{background:var(--a);animation:stamp .25s;box-shadow:2px 2px 0 var(--shc)}
+.pd.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.pad button{height:60px;border-radius:20px;border:2px solid var(--bd);background:var(--card);box-shadow:var(--sh);font:700 22px ui-rounded,system-ui,sans-serif;cursor:pointer;color:var(--ink)}.pad button:active{transform:translate(2px,2px);box-shadow:none;background:var(--a)}.pad button[data-v=c]{font-size:13px}
+#intro{position:fixed;inset:0;z-index:100;background:#ffd84d radial-gradient(#fff8 2px,transparent 2px) 0 0/26px 26px;display:grid;place-items:center;clip-path:circle(150% at 50% 45%);color:#2b2118}
+#intro.out{clip-path:circle(0% at 50% 45%);transition:clip-path .75s cubic-bezier(.7,0,.3,1)}
+.ig{text-align:center;padding:0 24px}.im{display:inline-block;animation:drop 1.1s cubic-bezier(.3,.9,.4,1) both}.im .msv{filter:drop-shadow(5px 6px 0 #2b2118)}
+@keyframes drop{0%{transform:translateY(-110vh) rotate(-25deg) scale(.7)}55%{transform:translateY(0) rotate(4deg) scale(1.15,.8)}70%{transform:translateY(-34px) rotate(-3deg) scale(.95,1.1)}85%{transform:translateY(0) scale(1.08,.92)}100%{transform:none}}
+.it2{font:700 42px ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;display:flex;justify-content:center;margin-top:8px}
+.it2 span{display:inline-block;animation:ltr .5s cubic-bezier(.3,1.8,.5,1) both;animation-delay:calc(.9s + var(--i)*.06s)}@keyframes ltr{from{transform:translateY(40px) scale(.3) rotate(-20deg);opacity:0}}
+#intro p{margin:6px 0 0;font-weight:800;color:#2b2118b8;animation:fin .6s 1.5s both}@keyframes fin{from{opacity:0}}
+.sp{position:absolute;font-style:normal;font-size:26px;opacity:0;animation:twk 1.6s ease-in-out infinite}@keyframes twk{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1) rotate(25deg)}}
+@media (max-width:859px){
+ body{font-size:14px;padding-bottom:108px}main{padding:18px 18px 0}
+ .top{margin:12px 0 18px}.top h1{font-size:21px}.top small{font-size:12px}.mas{width:50px;height:50px}
+ h2{font-size:16px}.big{font-size:28px}.mu{font-size:12.5px}
+ .card{padding:14px 16px;margin-bottom:14px;border-radius:16px}.it{padding:10px 0;gap:11px}.em{width:36px;height:36px;font-size:18px}
+ .btn{font-size:14px;padding:10px 14px}input,select,textarea{font-size:15px;padding:10px 12px}.chip{font-size:12.5px;padding:5px 11px}
+ nav{left:16px;right:16px;padding:5px}nav button{font-size:10px}nav button span{font-size:19px}
+ .fab{width:54px;height:54px;font-size:28px;right:22px}.wal b{font-size:15px}.toast{font-size:13px}
+ #sh{padding:16px 18px calc(18px + env(safe-area-inset-bottom,0px))}.seg{margin-bottom:16px}
+}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div id="intro"></div>
+<div id="lock"></div>
 <main id="app"></main>
 <nav id="nav"></nav>
 <div id="fabw"></div>
@@ -125,7 +156,7 @@ const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth
 const DAYS=['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
 const CATS={makan:['🍜','Makan'],kos:['🏠','Kos'],jalan:['🚌','Transport'],kuliah:['📚','Kuliah'],jajan:['🧋','Jajan'],lain:['💸','Lainnya'],gaji:['💰','Kiriman']};
 const KEY='kosthub-v1';
-let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[],budget:{},hist:{},stock:[],courses:[],notif:false,tgt:3.5,rem:24};
+let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[],budget:{},hist:{},stock:[],courses:[],notif:false,tgt:3.5,rem:24,mas:{color:'#fff7e6',hat:'toga',name:'Kosti'},theme:0,mode:'auto',pin:'',name:'',seen:false};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(save.t);save.t=setTimeout(()=>typeof sched==='function'&&sched(),700)};
 const DS=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];let hsub='hari';
@@ -192,12 +223,12 @@ function scanBody(){return `<div class="th">${scanPages.map((p,i)=>`<div><img sr
 function openScan(){SC.pages=[];SC.q=[];scCam()}
 
 async function render(an){
-  const T=TABS.find(t=>t[0]===tab);document.body.style.setProperty('--a',T[3]);
+  const T=TABS.find(t=>t[0]===tab);document.body.style.setProperty('--a',THEMES[S.theme||0].a[TABS.indexOf(T)]);
   if(tab==='berkas')await loadFiles();
   const hr=new Date().getHours(),gr=hr<11?'Pagi':hr<15?'Siang':hr<18?'Sore':'Malam';
-  const ttl={home:`Selamat ${gr.toLowerCase()}, anak kost!`,uang:'Dompet',kuliah:'Kuliah',harian:'Rutinitas',dapur:'Dapur Hemat',berkas:'Berkas'}[tab];
+  const ttl={home:`Selamat ${gr.toLowerCase()}, ${S.name?esc(S.name):'anak kost'}!`,uang:'Dompet',kuliah:'Kuliah',harian:'Rutinitas',dapur:'Dapur Hemat',berkas:'Berkas'}[tab];
   const tm=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
-  $('#app').innerHTML=`<div class="top"><div class="mas">${['😎','🪙','🤓','🧺','🧑‍🍳','🐱'][TABS.indexOf(T)]}</div><div><h1>${ttl}</h1><small>${tm}</small></div></div>`+{home:vHome,uang:vUang,kuliah:vKuliah,harian:vHarian,dapur:vDapur,berkas:vBerkas}[tab]();
+  $('#app').innerHTML=`<div class="top"><div class="mas">${masSVG(46)}</div><div><h1>${ttl}</h1><small>${tm}</small></div><button class="gear" data-a="set" aria-label="Pengaturan">⚙️</button></div>`+{home:vHome,uang:vUang,kuliah:vKuliah,harian:vHarian,dapur:vDapur,berkas:vBerkas}[tab]();
   $('#nav').innerHTML=TABS.map(t=>`<button class="${t[0]===tab?'on':''}" data-a="tab" data-v="${t[0]}"><span>${t[1]}</span>${t[2]}</button>`).join('');
   $('#fabw').innerHTML=FABS[tab]?`<button class="btn fab" data-a="fab" aria-label="${FABS[tab]}">+</button>`:'';
   if(an)anim();
@@ -217,7 +248,7 @@ const upSheet=()=>openSheet('Upload file',`<label class="f"><span>Jenis</span><s
 const noteSheet=()=>openSheet('Catatan materi',fld('nt','Judul')+`<label class="f"><span>Isi</span><textarea id="nb" rows="5"></textarea></label>`,'Simpan',()=>{const t=val('nt').trim();if(!t)return toast('Isi judul');S.notes.unshift({id:uid(),title:t,body:val('nb')});return true});
 
 function prep(file,doc){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;const x=c.getContext('2d');x.drawImage(im,0,0,c.width,c.height);if(doc){const d=x.getImageData(0,0,c.width,c.height),p=d.data;for(let i=0;i<p.length;i+=4){let g=.3*p[i]+.59*p[i+1]+.11*p[i+2];g=Math.max(0,Math.min(255,(g-110)*1.9+150));p[i]=p[i+1]=p[i+2]=g}x.putImageData(d,0,0)}URL.revokeObjectURL(u);res({url:c.toDataURL('image/jpeg',.82),w:c.width,h:c.height})};im.onerror=()=>rej();im.src=u})}
-async function saveOut(name,blob){const P=window.Capacitor&&Capacitor.Plugins;
+async function saveOut(name,blob){const P={Filesystem:plug('Filesystem'),Share:plug('Share')};
   try{if(P&&P.Filesystem&&P.Share){const b64=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(blob)});const w=await P.Filesystem.writeFile({path:name,data:b64,directory:'CACHE'});await P.Share.share({title:name,url:w.uri,dialogTitle:'Simpan atau kirim file'})}
   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();toast('Terunduh ✓')}}
   catch(e){if(!/cancel/i.test(String(e&&e.message)))toast('Gagal menyimpan file')}}
@@ -230,7 +261,7 @@ document.addEventListener('change',async e=>{
 });
 document.addEventListener('click',async e=>{
   if(e.target.id==='ov')return closeSheet();
-  const ms=e.target.closest('.mas');if(ms){ms.classList.remove('jump');void ms.offsetWidth;ms.classList.add('jump');toast(['Semangat kuliahnya! 💪','Udah makan belum? 🍜','Minum air dulu 💧','Hemat pangkal kaya 🪙','Tugasnya dicicil ya 📝'][Math.random()*5|0]);const r=ms.getBoundingClientRect();conf(r.left+26,r.top+20);return}
+  const ms=e.target.closest('.mas');if(ms){ms.classList.remove('jump');void ms.offsetWidth;ms.classList.add('jump');toast(S.mas.name+': '+['Semangat kuliahnya! 💪','Udah makan belum? 🍜','Minum air dulu 💧','Hemat pangkal kaya 🪙','Tugasnya dicicil ya 📝'][Math.random()*5|0]);const r=ms.getBoundingClientRect();conf(r.left+26,r.top+20);return}
   const b=e.target.closest('[data-a]');if(!b)return;
   const a=b.dataset.a,id=b.dataset.id,v=b.dataset.v;
   if(a==='ttk'||a==='trt')return;
@@ -367,7 +398,7 @@ function needMsg(){const {p,s:s0}=ipk(),rem=S.rem;if(!(rem>0))return 'Isi sisa S
 function vNilai(){const {p,s:s0,v}=ipk(),emo=v>=3.5?'🤩':v>=3?'😎':v>=2.5?'🙂':s0?'😅':'🤓';
   const l=S.courses.map(c=>`<div class="it"><button class="gb" data-a="cyc" data-id="${c.id}">${c.g}</button><div class="b">${esc(c.name)}<div class="mu">${c.sks} SKS · bobot ${GR[c.g]}</div></div><button class="x" data-a="dcs" data-id="${c.id}">✕</button></div>`).join('')||empty('🎓','Tambah mata kuliah pakai tombol +');
   return `<div class="card a"><div class="row2"><div class="flame">${emo}</div><div><div class="mu">IPK kamu</div><div class="big" data-n="${v}" data-d="2">${v.toFixed(2)}</div><div class="mu">${s0} SKS · ${p} poin mutu</div></div></div></div><div class="card"><h2>🎯 Target IPK</h2><div class="row2"><input type="range" id="tg" min="2" max="4" step="0.05" value="${S.tgt}" style="accent-color:var(--a)"><b id="tgv" style="font-size:22px">${S.tgt.toFixed(2)}</b></div><label class="f" style="margin-top:8px"><span>Sisa SKS yang akan diambil</span><input id="sr" type="number" inputmode="numeric" value="${S.rem}"></label><div id="tmsg" style="font-size:14px">${needMsg()}</div></div><div class="card"><h2>Mata kuliah</h2><div class="mu" style="margin-bottom:6px">Ketuk huruf nilai buat menggantinya</div>${l}</div>`}
-function courseSheet(){openSheet('Mata kuliah',fld('cn2','Nama mata kuliah')+fld('cs','SKS','number','3')+`<label class="f"><span>Nilai</span><select id="cg">${GK.map(g=>`<option>${g}</option>`).join('')}</select></label>`,'Simpan',()=>{const n=val('cn2').trim(),k=+val('cs');if(!n||!(k>0))return toast('Isi nama dan SKS');S.courses.push({id:uid(),name:n,sks:k,g:val('cg')});return true})}
+function courseSheet(){openSheet('Tambah mata kuliah',fld('cn2','Nama mata kuliah','text','Pemrograman Web')+'<div class="mu" style="margin:2px 0 6px">SKS</div>'+chips('cks',[['1','1'],['2','2'],['3','3'],['4','4'],['6','6']],'3')+'<div class="mu" style="margin:14px 0 6px">Nilai</div>'+chips('cgr',GK.map(g=>[g,g]),'A')+'<div style="height:14px"></div>','Simpan',()=>{const n=val('cn2').trim();if(!n)return toast('Isi nama mata kuliahnya dulu');S.courses.push({id:uid(),name:n,sks:+CV.cks,g:CV.cgr});return true})}
 document.addEventListener('input',e=>{const i=e.target.id;if(i==='tg'){S.tgt=+e.target.value;$('#tgv').textContent=S.tgt.toFixed(2)}else if(i==='sr')S.rem=Math.max(0,+e.target.value||0);else return;save();$('#tmsg').innerHTML=needMsg()});
 // Dapur hemat
 const RC=[['Telur dadar','🍳',10,4,['telur'],'Kocok telur + garam. Goreng di minyak panas sampai kuning keemasan.'],['Telur ceplok kecap','🥚',8,4,['telur','nasi','kecap'],'Ceplok telur setengah matang, taruh di atas nasi hangat, siram kecap.'],['Nasi goreng','🍛',15,7,['nasi','telur','kecap','bawang'],'Tumis bawang, masukkan telur orak-arik, lalu nasi dan kecap. Aduk sampai harum.'],['Mi instan telur','🍜',8,6,['mi instan','telur'],'Rebus mi, pecahkan telur di akhir. Tambah bumbu, jangan terlalu lama biar nggak lembek.'],['Tumis kangkung','🥬',10,5,['kangkung','bawang'],'Tumis bawang sampai wangi, masukkan kangkung dan garam, aduk 2 menit biar tetap hijau.'],['Tahu goreng','🧈',10,4,['tahu'],'Potong tahu, beri garam, goreng sampai kulitnya renyah.'],['Orek tempe','🥘',15,5,['tempe','kecap','bawang'],'Potong tempe kecil-kecil, goreng, lalu tumis dengan bawang dan kecap.'],['Roti panggang telur','🍞',7,5,['roti','telur'],'Goreng telur, taruh di antara roti panggang. Bonus: tambah sosis.'],['Orak-arik sosis','🌭',10,6,['sosis','telur'],'Iris sosis, tumis sebentar, tuang telur kocok, orak-arik.'],['Sayur sop','🍲',20,8,['sayur','bawang'],'Rebus air dan bawang, masukkan sayur yang keras dulu, bumbui garam dan merica.'],['Ayam goreng tepung','🍗',25,15,['ayam','tepung','bawang'],'Lumuri ayam bumbu bawang, gulingkan di tepung, goreng sampai matang.'],['Pisang goreng','🍌',12,6,['pisang','tepung'],'Campur tepung dan air jadi adonan, celup pisang, goreng.']];
@@ -385,14 +416,14 @@ function hintCard(){const H=[],st=streak();EXP.forEach(c=>{const L=S.budget[c];i
   const late=S.tasks.filter(t=>!t.done&&t.due&&t.due<today()).length,soon=S.tasks.filter(t=>!t.done&&t.due&&(t.due===today()||t.due===dAgo(-1))).length;
   if(late)H.push(`${late} tugas lewat deadline. Gaskeun sekarang! 🏃`);if(soon)H.push(`${soon} tugas deadline hari ini atau besok ⏰`);if(st)H.push(`Streak ${st} hari! Jangan sampai putus 🔥`);
   const ok=rcpState().filter(x=>!x.miss.length);if(ok.length)H.push(`Stok cukup buat bikin ${ok[0].r[0]} ${ok[0].r[1]}`);H.push('Ketuk aku buat tips lainnya ✨');
-  return `<div class="card bub bc" data-a="hint"><div class="mas2">🐱</div><div>${H[HI%H.length]}</div></div>`}
+  return `<div class="card bub bc" data-a="hint"><div class="mas2">${masSVG(52)}</div><div>${H[HI%H.length]}</div></div>`}
 function statRow(){const {s:s0,v}=ipk(),{l,sp}=budTot();return `<div class="grid g3" style="margin-bottom:14px"><div class="card wal"><div class="mu">🔥 Streak</div><b>${streak()} hari</b></div><div class="card wal"><div class="mu">🎓 IPK</div><b>${s0?v.toFixed(2):'–'}</b></div><div class="card wal"><div class="mu">💸 Jatah/hari</div><b>${l?rp(Math.max(0,(l-sp)/daysLeft())):'–'}</b></div></div>`}
 // Pengingat deadline (notifikasi lokal)
-const LN=()=>window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;
-const notifCard=()=>`<div class="card bc" data-a="notif"><div class="row2"><div class="em">🔔</div><div style="flex:1"><b>Pengingat deadline</b><div class="mu">${S.notif?'Aktif: H-1 jam 19.00 dan hari-H jam 07.00':'Ketuk buat mengaktifkan notifikasi'}</div></div><span class="chip ${S.notif?'on':''}">${S.notif?'ON':'OFF'}</span></div></div>`;
-async function toggleNotif(){const n=LN();if(!n)return toast('Pengingat hanya jalan di aplikasi APK');
+const plug=n=>{const C=window.Capacitor;if(!C)return null;try{if(C.Plugins&&C.Plugins[n])return C.Plugins[n];if(C.isPluginAvailable&&!C.isPluginAvailable(n))return null;return C.registerPlugin(n)}catch(e){return null}};const LN=()=>plug('LocalNotifications');
+const notifCard=()=>`<div class="card bc" data-a="notif"><div class="row2"><div class="em">🔔</div><div style="flex:1"><b>Pengingat deadline</b><div class="mu">${S.notif?'Aktif: H-1 jam 19.00 dan hari-H jam 07.00':'Ketuk buat mengaktifkan notifikasi'}</div></div><span class="chip ${S.notif?'on':''}">${S.notif?'ON':'OFF'}</span></div>${S.notif?'<button class="btn s g" data-a="ntest" style="margin-top:10px">Tes notifikasi</button>':''}</div>`;
+async function toggleNotif(){const n=LN();if(!window.Capacitor||!Capacitor.isNativePlatform||!Capacitor.isNativePlatform())return toast('Pengingat hanya jalan di aplikasi APK');if(!n)return toast('Plugin notifikasi belum ada di build ini. Upload package.json terbaru lalu build ulang');
   if(S.notif){S.notif=false;try{const q=await n.getPending();if(q.notifications.length)await n.cancel(q)}catch(e){}save();render();return toast('Pengingat dimatikan')}
-  try{const r=await n.requestPermissions();if(r.display!=='granted')return toast('Izin notifikasi ditolak')}catch(e){return toast('Gagal meminta izin')}
+  try{const r=await n.requestPermissions();if(r.display!=='granted')return toast('Izin ditolak. Aktifkan di Pengaturan HP → Aplikasi → KostHub → Notifikasi')}catch(e){return toast('Gagal meminta izin: '+(e&&e.message||e))}
   S.notif=true;save();await sched();render();toast('Pengingat aktif 🔔')}
 async function sched(){const n=LN();if(!n||!S.notif)return;try{const q=await n.getPending();if(q.notifications.length)await n.cancel(q);const L=[],now=Date.now();let id=1;
   S.tasks.filter(t=>!t.done&&t.due).forEach(t=>{const [y,m,d]=t.due.split('-').map(Number);[[new Date(y,m-1,d-1,19,0),'Besok deadline: '],[new Date(y,m-1,d,7,0),'Hari ini deadline: ']].forEach(([at,pre])=>{if(at.getTime()>now)L.push({id:id++,title:'KostHub ⏰',body:pre+t.title,schedule:{at,allowWhileIdle:true}})})});
@@ -412,8 +443,53 @@ function xAct(a,b){const id=b.dataset.id,v=b.dataset.v;switch(a){
   case 'bup':upSheet();$('#fc').value=v;return 1;
   case 'bscan':openScan();return 1;
   case 'bnote':noteSheet();return 1;
+  case 'set':settings();return 1;
+  case 'scol':S.mas.color=v;save();stRef();return 1;
+  case 'shat':S.mas.hat=v;save();stRef();return 1;
+  case 'sth':S.theme=+v;save();stRef();return 1;
+  case 'smode':S.mode=v;save();stRef();return 1;
+  case 'spin':if(v==='new')pinOpen('set1');else if(v==='chg')pinOpen('old',()=>pinOpen('set1'));else if(v==='del')pinOpen('old',()=>{S.pin='';save();stRef();toast('PIN dihapus')});else{closeSheet();pinOpen('check')}return 1;
+  case 'pk':pinKey(v);return 1;
+  case 'ntest':{const n=LN();if(n)n.schedule({notifications:[{id:999,title:'KostHub 🔔',body:'Tes pengingat berhasil!',schedule:{at:new Date(Date.now()+4000)}}]}).then(()=>toast('Tunggu 4 detik…')).catch(e=>toast('Gagal: '+(e&&e.message||e)));return 1}
   case 'hint':HI++;render();return 1}return 0}
-render(1);sched();
+
+/* ===== Maskot, tema, PIN, intro ===== */
+const IK='#2b2118',COLS=['#fff7e6','#d9f7e8','#ffe0e6','#dff0ff','#ece0ff','#ffe8d2'],HATS=[['toga','🎓 Toga'],['kupluk','🧢 Kupluk'],['mahkota','👑 Mahkota'],['pita','🎀 Pita'],['none','Polos']];
+const THEMES=[{n:'Pastel',a:['#ffd84d','#7be0a8','#8cc8ff','#ffb48a','#ff9aa8','#c9a8ff']},{n:'Matcha',a:['#c8e06c','#7ed3a0','#9ad7c4','#e8c872','#f0a88a','#b7c9ff']},{n:'Senja',a:['#ffb347','#ff8a5c','#ff6f91','#ffc371','#ff9a9e','#d4a5ff']},{n:'Laut',a:['#7fd6ff','#5ee3c4','#79a8ff','#8ce9ff','#ffb4c8','#b9a2ff']},{n:'Anggur',a:['#d7a8ff','#a8e6cf','#b5b9ff','#ffc8dd','#ffafcc','#cdb4ff']}];
+function masSVG(sz){const m=S.mas,st=`stroke="${IK}" stroke-width="6" stroke-linejoin="round"`;
+  const H={toga:`<path d="M62 66v20q38 16 76 0V66" fill="#568cd6" ${st}/><polygon points="26,60 100,28 174,60 100,86" fill="#8cc8ff" ${st}/><path d="M160 64v28" stroke="${IK}" stroke-width="5"/><circle cx="160" cy="96" r="7" fill="#ffd84d" stroke="${IK}" stroke-width="4"/>`,kupluk:`<path d="M44 66Q100-30 156 66z" fill="#ff7b8a" ${st}/><rect x="38" y="62" width="124" height="18" rx="9" fill="#ffb3bd" ${st}/><circle cx="100" cy="22" r="11" fill="#fff" ${st}/>`,mahkota:`<path d="M52 70l8-38 26 24 14-30 14 30 26-24 8 38z" fill="#ffd84d" ${st}/>`,pita:`<path d="M142 62l32-20v40zM142 62l-32-20v40z" fill="#ff9db1" ${st}/><circle cx="142" cy="62" r="9" fill="#ff7b9c" ${st}/>`,none:''}[m.hat]||'';
+  return `<svg class="msv" viewBox="0 0 200 200" width="${sz}" height="${sz}"><ellipse cx="68" cy="176" rx="22" ry="13" fill="#ffbe78" ${st}/><ellipse cx="132" cy="176" rx="22" ry="13" fill="#ffbe78" ${st}/><ellipse cx="100" cy="112" rx="76" ry="64" fill="${m.color}" ${st}/><ellipse cx="46" cy="132" rx="14" ry="8" fill="#ff9db1"/><ellipse cx="154" cy="132" rx="14" ry="8" fill="#ff9db1"/><g class="eyes"><ellipse cx="72" cy="108" rx="9" ry="14" fill="${IK}"/><ellipse cx="128" cy="108" rx="9" ry="14" fill="${IK}"/><circle cx="75" cy="102" r="3.5" fill="#fff"/><circle cx="131" cy="102" r="3.5" fill="#fff"/></g><path d="M86 128q7 9 14 0q7 9 14 0" fill="none" stroke="${IK}" stroke-width="5" stroke-linecap="round"/>${H}</svg>`}
+const applyTheme=()=>{const r=document.documentElement;if(S.mode==='terang')r.dataset.theme='light';else if(S.mode==='gelap')r.dataset.theme='dark';else delete r.dataset.theme};
+function settingsBody(){const m=S.mas,L=(t,h)=>`<div class="mu" style="margin-top:6px">${t}</div><div class="chips" style="margin:6px 0 12px">${h}</div>`;
+  return `<div style="text-align:center">${masSVG(110)}</div><label class="f"><span>Nama kamu</span><input id="un" value="${esc(S.name)}" placeholder="Anak kost" maxlength="16"></label><label class="f"><span>Nama maskot</span><input id="mn" value="${esc(m.name)}" maxlength="12"></label><div class="mu">Warna maskot</div><div class="sw">${COLS.map(c=>`<button class="swb ${m.color===c?'on':''}" style="background:${c}" data-a="scol" data-v="${c}" aria-label="warna"></button>`).join('')}</div>`+
+  L('Topi',HATS.map(([k,l])=>`<button class="chip ${m.hat===k?'on':''}" data-a="shat" data-v="${k}">${l}</button>`).join(''))+
+  L('Tema warna',THEMES.map((t,i)=>`<button class="chip ${S.theme===i?'on':''}" data-a="sth" data-v="${i}"><span class="dots2">${t.a.slice(0,4).map(c=>`<b style="background:${c}"></b>`).join('')}</span> ${t.n}</button>`).join(''))+
+  L('Mode tampilan',[['auto','🌗 Otomatis'],['terang','☀️ Terang'],['gelap','🌙 Gelap']].map(([k,l])=>`<button class="chip ${S.mode===k?'on':''}" data-a="smode" data-v="${k}">${l}</button>`).join(''))+
+  L('Keamanan',S.pin?'<button class="chip on" data-a="spin" data-v="chg">🔑 Ganti PIN</button><button class="chip" data-a="spin" data-v="del">🗑️ Hapus PIN</button><button class="chip" data-a="spin" data-v="now">🔒 Kunci sekarang</button>':'<button class="chip on" data-a="spin" data-v="new">🔒 Pasang PIN</button>')+(S.pin?'<div class="mu">Lupa PIN? Data bisa dihapus lewat Pengaturan Android → Aplikasi → KostHub → Hapus data.</div>':'')+'<div style="height:12px"></div>'}
+const settings=f=>openSheet(f?'Kenalan dulu yuk 👋':'Pengaturan','<div id="stb">'+settingsBody()+'</div>','Selesai',()=>true);
+const stRef=()=>{const b=$('#stb');if(b){const y=$('#sh').scrollTop;b.innerHTML=settingsBody();$('#sh').scrollTop=y}applyTheme();render()};
+document.addEventListener('input',e=>{if(e.target.id==='un'){S.name=e.target.value;save()}else if(e.target.id==='mn'){S.mas.name=e.target.value.trim()||'Kosti';save()}});
+// PIN
+let PN={buf:'',mode:'check',first:'',cb:null},HID=0;
+const hashPin=async p=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kosthub'+p));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return 'x'+btoa(p)}};
+function pinOpen(mode,cb){PN={buf:'',mode,first:'',cb};pinRender()}
+function pinRender(){const L=$('#lock'),T={check:'Halo! Masukkan PIN',old:'Masukkan PIN lama',set1:'Buat PIN 4 angka',set2:'Ulangi PIN-nya'}[PN.mode];L.className='on';
+  L.innerHTML=`<div class="lk"><div class="lkm">${masSVG(92)}</div><h2 style="justify-content:center;margin-top:4px">${T}</h2><div class="pd" id="pd">${[0,1,2,3].map(i=>`<i class="${i<PN.buf.length?'on':''}"></i>`).join('')}</div><div class="pad">${[1,2,3,4,5,6,7,8,9,'x',0,'⌫'].map(k=>k==='x'?(PN.mode==='check'?'<span></span>':'<button data-a="pk" data-v="c">Batal</button>'):`<button data-a="pk" data-v="${k}">${k}</button>`).join('')}</div></div>`}
+async function pinKey(k){if(k==='c'){$('#lock').className='';return}
+  if(k==='⌫')PN.buf=PN.buf.slice(0,-1);else if(PN.buf.length<4)PN.buf+=k;pinRender();if(PN.buf.length<4)return;
+  const h=await hashPin(PN.buf),md=PN.mode;
+  if(md==='check'||md==='old'){if(h===S.pin){$('#lock').className='';const f=PN.cb;PN.cb=null;f&&f()}else{$('#pd').classList.add('shake');toast('PIN salah 😵');setTimeout(()=>{PN.buf='';pinRender()},450)}}
+  else if(md==='set1'){PN.first=PN.buf;PN.mode='set2';PN.buf='';pinRender()}
+  else if(h===await hashPin(PN.first)){S.pin=h;save();$('#lock').className='';toast('PIN aktif 🔒');conf(innerWidth/2,innerHeight/3,['🔒','✨','⭐']);if($('#stb'))stRef()}
+  else{toast('PIN beda, ulangi ya');PN.mode='set1';PN.buf='';pinRender()}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)HID=Date.now();else if(S.pin&&HID&&Date.now()-HID>30000&&!$('#lock').classList.contains('on'))pinOpen('check')});
+// keyboard-safe sheet
+if(window.visualViewport){const f=()=>{const o=$('#ov'),v=visualViewport;o.style.top=v.offsetTop+'px';o.style.height=v.height+'px'};visualViewport.addEventListener('resize',f);visualViewport.addEventListener('scroll',f)}
+document.addEventListener('focusin',e=>{if(e.target.closest&&e.target.closest('#sh')&&/INPUT|TEXTAREA/.test(e.target.tagName))setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:'smooth'}),300)});
+// intro
+function runIntro(){const I=$('#intro');I.innerHTML=`<div class="ig"><div class="im">${masSVG(170)}</div><div class="it2">${[...'KostHub'].map((c,i)=>`<span style="--i:${i}">${c}</span>`).join('')}</div><p>${esc(S.mas.name)} nemenin kuliah dan kost kamu</p></div><i class="sp" style="left:14%;top:22%;animation-delay:.9s">✨</i><i class="sp" style="right:16%;top:30%;animation-delay:1.2s">⭐</i><i class="sp" style="left:22%;bottom:24%;animation-delay:1.5s">💫</i><i class="sp" style="right:20%;bottom:20%;animation-delay:1s">✨</i>`;
+  const end=()=>{if(I.dataset.d)return;I.dataset.d=1;I.classList.add('out');setTimeout(()=>{I.remove();if(S.pin)pinOpen('check');else if(!S.seen){S.seen=true;save();settings(true)}},800)};I.onclick=end;setTimeout(end,2700)}
+applyTheme();render(1);sched();runIntro();
 </script>
 </body>
 </html>
