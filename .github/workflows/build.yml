@@ -24,6 +24,8 @@ jobs:
           mkdir -p www
           cp index.html www/index.html
           cp node_modules/jspdf/dist/jspdf.umd.min.js www/
+          cp node_modules/@fontsource-variable/fredoka/files/fredoka-latin-wght-normal.woff2 www/fredoka.woff2 || echo 'font fredoka tidak ketemu'
+          cp node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2 www/nunito.woff2 || echo 'font nunito tidak ketemu'
           npx cap add android
           sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />\n    <application#' android/app/src/main/AndroidManifest.xml
       - name: Pasang ikon
