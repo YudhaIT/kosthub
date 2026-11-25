@@ -2,5 +2,10 @@
   "appId": "com.kosthub.app",
   "appName": "KostHub",
   "webDir": "www",
-  "backgroundColor": "#fff3dc"
+  "backgroundColor": "#fff3dc",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
 }
