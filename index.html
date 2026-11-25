@@ -48,7 +48,7 @@ nav button{flex:1;background:none;border:2px solid transparent;border-radius:18p
 nav button span{display:block;font-size:21px;line-height:1.2}
 nav button.on{background:var(--a);color:var(--on);border-color:var(--bd)}
 .fab{position:fixed;right:max(16px,calc(50% - 340px));bottom:calc(92px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;font-size:30px;line-height:1;padding:0;z-index:4}
-#ov{position:fixed;inset:0;background:#2b211888;display:none;align-items:flex-end;justify-content:center;z-index:20}
+#ov{position:fixed;inset:0;background:#2b211888;display:none;align-items:flex-end;justify-content:center;z-index:45}
 #ov.on{display:flex}
 #sh{background:var(--card);border:2px solid var(--bd);border-radius:26px 26px 0 0;width:100%;max-width:520px;max-height:calc(100% - 16px);overflow:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));animation:up .25s ease-out}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
@@ -158,6 +158,20 @@ nav button{position:relative;z-index:1}nav button span{line-height:0;margin-bott
 .toast{background:var(--ink);color:var(--bg);box-shadow:0 12px 30px -8px #0007;border-radius:16px;padding:11px 16px}
 .sbar{display:flex;gap:8px;padding:10px 12px;align-items:center}.sbar input{flex:1}
 .spin{display:inline-block;animation:spn 1s linear infinite}@keyframes spn{to{transform:rotate(360deg)}}
+.gear+.gear{margin-left:8px}
+#chat{position:fixed;inset:0;z-index:40;background:var(--bg) radial-gradient(var(--dot) 1.3px,transparent 1.3px) 0 0/20px 20px;display:none;flex-direction:column}#chat.on{display:flex;animation:fd .25s}
+.chh{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;border-bottom:2px solid var(--bd);background:var(--card)}
+#chm{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.bb{max-width:86%;padding:10px 13px;border:2px solid var(--bd);border-radius:18px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:2px 2px 0 var(--shc);animation:pop .3s both}
+.bb.u{align-self:flex-end;background:var(--a);color:#2b2118;border-bottom-right-radius:6px}.bb.m{align-self:flex-start;background:var(--card);border-bottom-left-radius:6px}
+.act{margin-top:8px;border-top:2px dashed var(--bd);padding-top:8px;white-space:normal}.act div{font-size:13px;margin-bottom:4px}
+.chi{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:2px solid var(--bd);background:var(--card)}.chi input{flex:1}
+.typ i{width:7px;height:7px;border-radius:50%;background:var(--mu);display:inline-block;margin:0 2px;animation:tp 1s infinite}.typ i:nth-child(2){animation-delay:.15s}.typ i:nth-child(3){animation-delay:.3s}@keyframes tp{50%{transform:translateY(-5px)}}
+#wr{position:fixed;inset:0;z-index:42;display:none;flex-direction:column;background:var(--c,#ffd84d);color:#2b2118;transition:background .4s}#wr.on{display:flex;animation:fd .25s}
+.wpg{display:flex;gap:4px;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 0}.wpg i{flex:1;height:4px;border-radius:4px;background:#2b211833;overflow:hidden}.wpg i b{display:block;height:100%;width:0;background:#2b2118}.wpg i.d b{width:100%}.wpg i.n b{animation:wfill 5.2s linear forwards}@keyframes wfill{to{width:100%}}
+.wx{position:absolute;right:10px;top:calc(24px + env(safe-area-inset-top,0px));font-size:22px;color:#2b2118}
+.wsl{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px 28px;gap:10px}.we{font-size:72px;line-height:1;animation:pop .5s both}.wk{font:700 18px Fredoka,ui-rounded,system-ui,sans-serif;opacity:.7;animation:fin .5s both}
+.wb{font:700 clamp(40px,14vw,68px)/1.05 Fredoka,ui-rounded,system-ui,sans-serif;animation:pop .6s .1s both;font-variant-numeric:tabular-nums}.wt{font-size:17px;max-width:320px;line-height:1.5;animation:fin .6s .3s both}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -168,6 +182,8 @@ nav button{position:relative;z-index:1}nav button span{line-height:0;margin-bott
 <nav id="nav"></nav>
 <div id="fabw"></div>
 <div id="scn"></div>
+<div id="chat"></div>
+<div id="wr"></div>
 <div id="ov"><div id="sh"></div></div>
 <script src="jspdf.umd.min.js"></script>
 <script>
@@ -179,7 +195,7 @@ const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth
 const DAYS=['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
 const CATS={makan:['🍜','Makan'],kos:['🏠','Kos'],jalan:['🚌','Transport'],kuliah:['📚','Kuliah'],jajan:['🧋','Jajan'],lain:['💸','Lainnya'],gaji:['💰','Kiriman']};
 const KEY='kosthub-v1';
-let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[],budget:{},hist:{},stock:[],courses:[],notif:false,tgt:3.5,rem:24,mas:{color:'#fff7e6',hat:'toga',name:'Kosti'},theme:0,mode:'auto',pin:'',name:'',seen:false,xp:0,xpd:{},xph:{},fs:{},pl:[],fh:{},aiKey:'',aiLast:null,rfav:[],aiProv:'claude',aiKeyG:'',aiMod:{claude:'claude-haiku-5-5',gemini:'gemini-3.5-flash'}};
+let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[],budget:{},hist:{},stock:[],courses:[],notif:false,tgt:3.5,rem:24,mas:{color:'#fff7e6',hat:'toga',name:'Kosti'},theme:0,mode:'auto',pin:'',name:'',seen:false,xp:0,xpd:{},xph:{},fs:{},pl:[],fh:{},aiKey:'',aiLast:null,rfav:[],aiProv:'claude',aiKeyG:'',aiMod:{claude:'claude-haiku-5-5',gemini:'gemini-3.5-flash'},chatH:[]};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(save.t);save.t=setTimeout(()=>typeof sched==='function'&&sched(),700)};
 const DS=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];let hsub='hari';
@@ -207,7 +223,7 @@ function vHome(){
   const cls=S.classes.filter(c=>c.day===DAYS[todayIdx()]).sort((a,b)=>a.time.localeCompare(b.time));
   const tk=S.tasks.filter(t=>!t.done).sort((a,b)=>(a.due||'9').localeCompare(b.due||'9')).slice(0,3);
   const dn=S.rdone[today()]||[],rtd=rToday(),rd=rtd.filter(r=>dn.includes(r.id)).length,pc=rtd.length?Math.round(rd/rtd.length*100):0;
-  return smartBar()+xpCard()+bkCard()+plCard()+detCard()+statRow()+`<div class="card a">${spark()}<div class="mu">Total semua dompet</div><div class="big" data-n="${tot}">${rp(tot)}</div><div class="mu">${S.wallets.length} dompet · pengeluaran bulan ini ${rp(S.tx.filter(t=>t.type==='out'&&t.date.startsWith(today().slice(0,7))).reduce((a,t)=>a+t.amt,0))}</div></div>
+  return smartBar()+xpCard()+bkCard()+plCard()+detCard()+wrCard()+statRow()+`<div class="card a">${spark()}<div class="mu">Total semua dompet</div><div class="big" data-n="${tot}">${rp(tot)}</div><div class="mu">${S.wallets.length} dompet · pengeluaran bulan ini ${rp(S.tx.filter(t=>t.type==='out'&&t.date.startsWith(today().slice(0,7))).reduce((a,t)=>a+t.amt,0))}</div></div>
   <div class="two"><div class="card"><h2>🎒 Kuliah hari ini</h2>${cls.length?cls.map(c=>`<div class="it"><div class="em">${esc(c.time)}</div><div class="b">${esc(c.name)}<div class="mu">${esc(c.room||'')}</div></div></div>`).join(''):empty('😴','Kosong! Waktunya rebahan')}</div>
   <div class="card"><h2>⏰ Deadline terdekat</h2>${tk.length?tk.map(t=>`<div class="it"><div class="b">${esc(t.title)}<div class="mu ${t.due&&t.due<today()?'late':''}">${esc(t.due||'tanpa tenggat')}</div></div></div>`).join(''):empty('🎉','Tidak ada tugas nunggak')}</div></div>
   <div class="card" style="margin-top:14px"><h2>🧺 Rutinitas hari ini</h2><div class="bar"><i style="width:${pc}%"></i></div><div class="mu" style="margin-top:6px">${rtd.length?rd+' dari '+rtd.length+' selesai':'Tidak ada kegiatan hari ini'}</div></div>`}
@@ -252,7 +268,7 @@ async function render(an){plSweep();
   const hr=new Date().getHours(),gr=hr<11?'Pagi':hr<15?'Siang':hr<18?'Sore':'Malam';
   const ttl={home:`Selamat ${gr.toLowerCase()}, ${S.name?esc(S.name):'anak kost'}!`,uang:'Dompet',kuliah:'Kuliah',harian:'Rutinitas',dapur:'Dapur Hemat',berkas:'Berkas'}[tab];
   const tm=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
-  $('#app').innerHTML=`<div class="top"><div class="mas">${masSVG(46)}</div><div><h1>${ttl}</h1><small>${tm}</small></div><button class="gear" data-a="set" aria-label="Pengaturan">${ic('gear',20)}</button></div>`+{home:vHome,uang:vUang,kuliah:vKuliah,harian:vHarian,dapur:vDapur,berkas:vBerkas}[tab]();
+  $('#app').innerHTML=`<div class="top"><div class="mas">${masSVG(46)}</div><div><h1>${ttl}</h1><small>${tm}</small></div><button class="gear" data-a="chat" aria-label="Ngobrol">${ic('chat',20)}</button><button class="gear" data-a="set" aria-label="Pengaturan">${ic('gear',20)}</button></div>`+{home:vHome,uang:vUang,kuliah:vKuliah,harian:vHarian,dapur:vDapur,berkas:vBerkas}[tab]();
   paintNav();
   $('#fabw').innerHTML=FABS[tab]&&!(tab==='harian'&&hsub==='fokus')?`<button class="btn fab" data-a="fab" aria-label="${FABS[tab]}">${ic('plus',26)}</button>`:'';
   if(an)anim();
@@ -475,6 +491,16 @@ function xAct(a,b){const id=b.dataset.id,v=b.dataset.v;switch(a){
   case 'plw':plRes(id,true);return 1;
   case 'pll':plRes(id,false);return 1;
   case 'det':detSheet();return 1;
+  case 'chat':chatOpen();return 1;
+  case 'chx':$('#chat').className='';return 1;
+  case 'chclr':S.chatH=[];save();chatPaint();return 1;
+  case 'chsend':{const i=$('#chin');if(i){const t=i.value;i.value='';chSend(t)}return 1}
+  case 'chsug':chSend(v);return 1;
+  case 'chap':chApply(+id);return 1;
+  case 'wropen':WR.p=9999;wrStart();return 1;
+  case 'wrp':WR.p=+v;wrStart();return 1;
+  case 'wrx':clearTimeout(WR.t);$('#wr').className='';return 1;
+  case 'wrshare':wrImg(WR.D).then(b=>saveOut('semester-wrapped.png',b)).catch(()=>toast('Gagal membuat gambar'));return 1;
   case 'aikey':aiKeySheet();return 1;
   case 'aidel':if(S.aiProv==='gemini')S.aiKeyG='';else S.aiKey='';save();closeSheet();render();return 1;
   case 'aic':AI[b.dataset.g]=v;render();return 1;
@@ -696,6 +722,89 @@ function aiSheet(src,i){const L=src==='fav'?S.rfav:((S.aiLast&&S.aiLast.ide)||[]
   openSheet((r.emoji||'🍽️')+' '+esc(r.nama),`<div class="mu">⏱ ${esc(r.menit)} menit · ~Rp${esc(r.biaya_rb)}rb</div><div class="chips" style="margin:10px 0">${(r.bahan||[]).map(b=>`<span class="chip ${hv(String(b.n).toLowerCase())?'on':''}">${esc(b.n)}</span>`).join('')}</div><div class="mu" style="margin-bottom:4px">Langkah</div>${(r.langkah||[]).map((x,k)=>`<div class="it"><div class="em" style="font-size:14px">${k+1}</div><div class="b">${esc(x)}</div></div>`).join('')}${r.tips?`<div class="mu" style="margin-top:10px">💡 ${esc(r.tips)}</div>`:''}<button class="btn g" style="width:100%;margin-top:14px" data-a="aifav" data-v="${src}" data-id="${i}">${fav?'★ Hapus dari tersimpan':'☆ Simpan resep'}</button>`)}
 function aiKeySheet(){const g=S.aiProv==='gemini',k=g?S.aiKeyG:S.aiKey;
   openSheet('Aktifkan Chef AI 🤖',`<div class="chips" style="margin-bottom:12px"><button class="chip ${g?'':'on'}" data-a="aiprov" data-v="claude">Claude</button><button class="chip ${g?'on':''}" data-a="aiprov" data-v="gemini">Gemini</button></div><div class="mu" style="line-height:1.6;margin-bottom:10px">${g?'Pakai API key dari <b>aistudio.google.com/apikey</b> (Google AI Studio).':'Pakai API key dari <b>console.anthropic.com</b> (Anthropic).'} Butuh internet. Key disimpan hanya di HP ini dan tidak ikut backup. Stok dan pilihan masakmu dikirim ke ${g?'Google':'Anthropic'} untuk membuat ide, dan pemakaian mengikuti kuota atau biaya akunmu.</div><label class="f"><span>API key</span><input id="akey" type="password" placeholder="${g?'AIza…':'sk-ant-…'}" autocomplete="off" value="${esc(k)}"></label><label class="f"><span>Model</span><input id="amod" value="${esc(aiMd())}" autocomplete="off"></label>${k?'<button class="chip" data-a="aidel" style="margin-bottom:10px">🗑️ Hapus key</button>':''}`,'Simpan',()=>{const kk=val('akey').trim();if(!kk)return toast('Tempel API key dulu');if(g)S.aiKeyG=kk;else S.aiKey=kk;S.aiMod=Object.assign({},S.aiMod,{[S.aiProv]:val('amod').trim()||(g?'gemini-3.5-flash':'claude-haiku-5-5')});toast('Chef AI aktif 🤖');return true})}
+
+/* ===== Ngobrol sama maskot (AI) ===== */
+IC.chat='<path d="M20 12a7.5 7.5 0 0 1-11 6.6L4 20l1.4-4.2A7.5 7.5 0 1 1 20 12z"/><circle cx="9" cy="12" r=".8" fill="currentColor"/><circle cx="12.5" cy="12" r=".8" fill="currentColor"/><circle cx="16" cy="12" r=".8" fill="currentColor"/>';
+const CH={busy:false};
+async function aiCall(sys,msgs,tok){const g=S.aiProv==='gemini';let r,d,tx;
+  if(g){r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(aiMd())+':generateContent',{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':S.aiKeyG},body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:msgs.map(m=>({role:m.r==='user'?'user':'model',parts:[{text:m.t}]})),generationConfig:{responseMimeType:'application/json',maxOutputTokens:Math.max(tok,4096),temperature:.9}})});
+    d=await r.json().catch(()=>({}));if(!r.ok){const m=d.error&&d.error.message||'';throw new Error(r.status===400&&/api key/i.test(m)?'API key tidak valid':r.status===403?'Key ditolak atau belum aktif':r.status===404?'Model tidak ditemukan, ganti nama model di pengaturan AI':r.status===429?'Kuota habis atau terlalu sering, coba lagi nanti':r.status>=500?'Server AI lagi sibuk':'Error '+r.status+(m?': '+m:''))}
+    if(d.promptFeedback&&d.promptFeedback.blockReason)throw new Error('Pesan diblokir AI, coba kalimat lain');tx=((d.candidates||[])[0]?.content?.parts||[]).map(x=>x.text||'').join('')}
+  else{r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':S.aiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:aiMd(),max_tokens:tok,system:sys,messages:msgs.map(m=>({role:m.r,content:m.t}))})});
+    d=await r.json().catch(()=>({}));if(!r.ok){const m=d.error&&d.error.message||'';throw new Error(r.status===401?'API key tidak valid':r.status===404?'Model tidak ditemukan, ganti nama model di pengaturan AI':r.status===429?'Terlalu sering, coba sebentar lagi':r.status>=500?'Server AI lagi sibuk':'Error '+r.status+(m?': '+m:''))}
+    tx=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('')}
+  return tx}
+function chatCtx(){const ti=todayIdx(),d=new Date(),dn=S.rdone[today()]||[],w7={};S.tx.filter(t=>t.type==='out'&&t.date>dAgo(7)).forEach(t=>{const c=t.cat||'lain';w7[c]=(w7[c]||0)+t.amt});const ip=ipk();
+  return [`Hari ini ${DAYS[ti]}, ${today()}, jam ${d.getHours()}.${String(d.getMinutes()).padStart(2,'0')}. Level ${lv()} (${ttl(lv())}), ${S.xp} XP, streak ${streak()} hari.`,
+  'Jadwal kuliah hari ini: '+(S.classes.filter(c=>c.day===DAYS[ti]).map(c=>`${c.time} ${c.name}${c.room?' ('+c.room+')':''}`).join('; ')||'tidak ada'),
+  'Jadwal kuliah seminggu: '+(S.classes.map(c=>`${c.day} ${c.time} ${c.name}`).join('; ')||'kosong'),
+  'Tugas belum selesai: '+(S.tasks.filter(t=>!t.done).map(t=>`${t.title}${t.course?' ['+t.course+']':''} tenggat ${t.due||'-'}`).join('; ')||'tidak ada'),
+  'Rutinitas hari ini: '+(rToday().map(r=>`${r.time} ${r.text}${dn.includes(r.id)?' (sudah)':''}`).join('; ')||'tidak ada'),
+  'Saldo dompet: '+S.wallets.map(w=>`${w.name} ${rp(bal(w))}`).join(', '),
+  'Anggaran bulan ini: '+(budTot().l?EXP.filter(c=>S.budget[c]).map(c=>`${CATS[c][1]} ${rp(spent(c))} dari ${rp(S.budget[c])}`).join(', ')+`; sisa ${daysLeft()} hari`:'belum diatur'),
+  'Pengeluaran 7 hari terakhir: '+(Object.keys(w7).map(c=>`${CATS[c][1]} ${rp(w7[c])}`).join(', ')||'tidak ada')+`; total ${rp(Object.values(w7).reduce((a,b)=>a+b,0))}`,
+  'Stok dapur: '+(S.stock.join(', ')||'kosong'),ip.s?`IPK ${ip.v.toFixed(2)} dari ${ip.s} SKS`:'IPK belum diisi',`Fokus hari ini ${S.fs[today()]||0} menit.`].join('\n')}
+const chatSys=()=>`Kamu ${S.mas.name}, maskot aplikasi KostHub milik anak kost dan mahasiswa Indonesia${S.name?' bernama '+S.name:''}. Ngobrol santai, hangat, to the point (maksimal 5 kalimat kecuali diminta rinci), boleh emoji secukupnya. Jawab berdasarkan DATA di bawah dan jangan mengarang angka atau fakta tentang pengguna. Kalau pengguna meminta mencatat sesuatu atau dibuatkan jadwal belajar, isi "aksi".\nBalas HANYA dengan JSON valid tanpa markdown: {"balas":"teks","aksi":[]}.\nJenis aksi (maksimal 10):\n{"tipe":"tambah_tugas","judul":"","tgl":"YYYY-MM-DD","matkul":""}\n{"tipe":"tambah_transaksi","jenis":"keluar atau masuk","jumlah":15000,"catatan":"","kategori":"makan|kos|jalan|kuliah|jajan|lain","dompet":"nama dompet"}\n{"tipe":"tambah_jadwal","hari":"Senin","jam":"08:00","matkul":"","ruang":""}\n{"tipe":"tambah_rutinitas","jam":"07:00","kegiatan":"","hari":["Senin"]}\n{"tipe":"tambah_stok","bahan":""}\nUntuk jadwal belajar, buat beberapa tambah_tugas berisi sesi belajar dengan tanggal spesifik.\n\nDATA:\n${chatCtx()}`;
+function chatOpen(){if(!aiK())return aiKeySheet();S.chatH=S.chatH||[];$('#chat').className='on';chatPaint()}
+const aDesc=a=>esc({tambah_tugas:`📝 Tugas: ${a.judul}${a.tgl?' · '+a.tgl:''}`,tambah_transaksi:`🪙 ${a.jenis==='masuk'?'Masuk':'Keluar'} ${rp(+a.jumlah||0)} · ${a.catatan||a.kategori||''}`,tambah_jadwal:`🗓️ ${a.hari} ${a.jam} ${a.matkul}`,tambah_rutinitas:`🧺 ${a.jam||''} ${a.kegiatan}`,tambah_stok:`🧺 Stok: ${a.bahan}`}[a.tipe]||'');
+function chatPaint(){const H=S.chatH=S.chatH||[],el=$('#chat');
+  if(!$('#chm'))el.innerHTML=`<div class="chh">${masSVG(38)}<div style="flex:1"><b>${esc(S.mas.name)}</b><div class="mu">${S.aiProv==='gemini'?'Gemini':'Claude'} · tahu datamu</div></div><button class="x" data-a="chclr" aria-label="Hapus obrolan">🗑️</button><button class="x" data-a="chx" style="font-size:20px" aria-label="Tutup">✕</button></div><div id="chm"></div><div class="chi"><input id="chin" placeholder="Tanya atau suruh ${esc(S.mas.name)}…" autocomplete="off"><button class="btn s" data-a="chsend">Kirim</button></div>`;
+  const sg=['Besok aku ngapain aja?','Aku boros nggak minggu ini?','Ide makan malam dari stok','Bikinin jadwal belajar UAS 3 hari lagi'];
+  $('#chm').innerHTML=(H.length?'':`<div class="empty"><div style="display:inline-block">${masSVG(80)}</div><br>Halo! Aku ${esc(S.mas.name)}. Aku tahu jadwal, tugas, dan uangmu. Tanya apa aja, atau suruh aku mencatat sesuatu.</div><div class="chips" style="justify-content:center">${sg.map(x=>`<button class="chip" data-a="chsug" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>`)+
+  H.map((m,i)=>m.r==='user'?`<div class="bb u">${esc(m.t)}</div>`:`<div class="bb m">${esc(m.t)}${m.a&&m.a.length?`<div class="act">${m.a.map(a=>`<div>${aDesc(a)}</div>`).join('')}${m.ap?'<div class="mu">✅ Sudah ditambahkan</div>':`<button class="btn s" data-a="chap" data-id="${i}">Terapkan ${m.a.length} perubahan</button>`}</div>`:''}</div>`).join('')+(CH.busy?'<div class="bb m typ"><i></i><i></i><i></i></div>':'');
+  const b=$('#chm');b.scrollTop=b.scrollHeight}
+async function chSend(txt){txt=(txt||'').trim();if(!txt||CH.busy)return;if(!aiK())return aiKeySheet();S.chatH=(S.chatH||[]).concat({r:'user',t:txt}).slice(-40);save();CH.busy=true;chatPaint();
+  try{const msgs=[];S.chatH.filter(m=>!m.err).slice(-12).forEach(m=>{if(msgs.length&&msgs[msgs.length-1].r===m.r)msgs[msgs.length-1].t+='\n'+m.t;else msgs.push({r:m.r,t:m.t})});while(msgs.length&&msgs[0].r!=='user')msgs.shift();
+    const raw=await aiCall(chatSys(),msgs,1500);let j;try{j=JSON.parse(raw.slice(raw.indexOf('{'),raw.lastIndexOf('}')+1))}catch(e){j={balas:raw}}
+    S.chatH.push({r:'assistant',t:String(j.balas||'Hmm, aku bingung jawabnya 😅'),a:Array.isArray(j.aksi)?j.aksi.slice(0,12):[],ap:false})}
+  catch(e){const m=String(e&&e.message||e);S.chatH.push({r:'assistant',t:'😵 '+(/fetch|network/i.test(m)?'Aku nggak bisa terhubung. Cek internet kamu ya.':m),a:[],ap:true,err:1})}
+  save();CH.busy=false;chatPaint()}
+function chApply(i){const m=S.chatH[i];if(!m||m.ap)return;let n=0;
+  (m.a||[]).forEach(a=>{try{
+    if(a.tipe==='tambah_tugas'&&a.judul){S.tasks.push({id:uid(),title:String(a.judul).slice(0,80),course:a.matkul||'',due:/^\d{4}-\d{2}-\d{2}$/.test(a.tgl)?a.tgl:'',done:false});n++}
+    else if(a.tipe==='tambah_transaksi'&&+a.jumlah>0){const w=S.wallets.find(x=>String(a.dompet||'').toLowerCase()===x.name.toLowerCase())||S.wallets[0],c=CATS[a.kategori]?a.kategori:'lain';S.tx.push({id:uid(),w:w.id,type:a.jenis==='masuk'?'in':'out',amt:Math.round(+a.jumlah),note:String(a.catatan||'').slice(0,60),cat:a.jenis==='masuk'?'gaji':c,date:today()});n++}
+    else if(a.tipe==='tambah_jadwal'&&a.matkul&&DAYS.includes(a.hari)){S.classes.push({id:uid(),day:a.hari,time:a.jam||'00:00',name:String(a.matkul).slice(0,60),room:a.ruang||''});n++}
+    else if(a.tipe==='tambah_rutinitas'&&a.kegiatan){S.routine.push({id:uid(),time:/^\d{1,2}:\d{2}$/.test(a.jam)?a.jam.padStart(5,'0'):'07:00',text:String(a.kegiatan).slice(0,60),days:Array.isArray(a.hari)&&a.hari.length?a.hari.map(h=>typeof h==='number'?h:DAYS.indexOf(h)).filter(x=>x>=0):[0,1,2,3,4,5,6]});n++}
+    else if(a.tipe==='tambah_stok'&&a.bahan){const t=nz(String(a.bahan).toLowerCase().trim());if(t&&!S.stock.includes(t)){S.stock.push(t);n++}}}catch(e){}});
+  m.ap=true;save();chatPaint();render();toast(n?n+' perubahan diterapkan ✓':'Tidak ada yang bisa diterapkan');if(n){xp(2,'ch:'+Date.now());conf(innerWidth/2,innerHeight/3,['✨','🐱','⭐'])}}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='chin'){e.preventDefault();const t=e.target.value;e.target.value='';chSend(t)}});
+if(window.visualViewport){const f=()=>{const c=$('#chat'),v=visualViewport;c.style.top=v.offsetTop+'px';c.style.height=v.height+'px'};visualViewport.addEventListener('resize',f);visualViewport.addEventListener('scroll',f)}
+/* ===== Semester Wrapped ===== */
+let WR={i:0,p:9999,sl:[],t:null,D:null};
+const wrCard=()=>{const n=S.tx.length+S.tasks.filter(t=>t.done).length+Object.keys(S.fs).length;return n<5?'':`<div class="card bc" data-a="wropen"><div class="row2"><div class="em">🎬</div><div style="flex:1"><b>Semester Wrapped</b><div class="mu">Cerita perjalananmu: fokus, tugas, uang, dan julukanmu</div></div></div></div>`};
+function wrData(p){const f=p>=9999?'0000-00-00':dAgo(p),inn=d=>d>=f;
+  const fs=Object.entries(S.fs).filter(([k])=>inn(k)),fm=fs.reduce((a,[,v])=>a+v,0),best=fs.slice().sort((a,b)=>b[1]-a[1])[0];
+  const td=S.tasks.filter(t=>t.done&&t.doneAt&&inn(t.doneAt)),ontime=td.filter(t=>!t.due||t.doneAt<=t.due).length;
+  const out=S.tx.filter(t=>t.type==='out'&&inn(t.date)),tot=out.reduce((a,t)=>a+t.amt,0),by={};out.forEach(t=>{const c=t.cat||'lain';by[c]=(by[c]||0)+t.amt});
+  const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0],big=out.slice().sort((a,b)=>b.amt-a.amt)[0],dts=out.map(t=>t.date).sort(),span=p>=9999?(dts[0]?Math.max(1,Math.round((new Date(today())-new Date(dts[0]))/864e5)+1):1):p;
+  const hs=Object.entries(S.hist).filter(([k,h])=>inn(k)&&h.t&&h.d===h.t).map(x=>x[0]).sort();let ls=0,cu=0,pv=null;hs.forEach(k=>{cu=pv&&Math.round((new Date(k)-new Date(pv))/864e5)===1?cu+1:1;pv=k;ls=Math.max(ls,cu)});
+  const pl=S.pl.filter(x=>x.st!=='open'),ent=Object.entries(S.fh||{}).sort((a,b)=>b[1]-a[1])[0];
+  return{fm,best,td:td.length,ontime,tot,top,big,avg:tot/span,perf:hs.length,ls,won:pl.filter(x=>x.st==='won').length,pl:pl.length,hr:ent?+ent[0]:null}}
+const nick=D=>D.hr!==null&&(D.hr>=21||D.hr<4)?['🦉','Si Burung Hantu','Fokusmu paling tajam saat malam hari.']:D.hr!==null&&D.hr<8?['🌅','Pejuang Subuh','Kamu paling produktif pagi-pagi.']:D.ls>=14?['🔥','Raja Streak','Konsistensimu bikin iri.']:D.td>=20?['⚙️','Mesin Tugas','Tugas apa pun kamu libas.']:D.top&&D.top[0]==='jajan'?['🧋','Sultan Jajan','Dompetmu paling sering bocor di jajan.']:D.top&&D.top[0]==='makan'?['🍜','Pecinta Kuliner','Perut selalu nomor satu.']:['🏠','Anak Kost Sejati','Bertahan dan terus berkembang.'];
+function wrSlides(D){const A=THEMES[S.theme||0].a,nk=nick(D),pc=D.td?Math.round(D.ontime/D.td*100):0,cat=D.top?CATS[D.top[0]]:null;
+  return [{e:masSVG(120),k:'Semester kamu di KostHub',b:'Siap lihat?',t:'Pilih periode, lalu ketuk layar buat lanjut.',x:`<div class="chips" style="justify-content:center;margin-top:6px">${[[30,'30 hari'],[90,'90 hari'],[9999,'Semua']].map(([v,l])=>`<button class="chip ${WR.p===v?'on':''}" data-a="wrp" data-v="${v}">${l}</button>`).join('')}</div>`},
+  {e:'🍅',k:'Waktu fokusmu',n:D.fm/60,f:'h',u:' jam',t:D.fm?`Setara ${Math.max(1,Math.round(D.fm/120))} film panjang.${D.best?' Hari terbaik: '+D.best[0]+' ('+D.best[1]+' menit).':''}`:'Belum ada sesi fokus. Coba timer 🍅 setelah ini!'},
+  {e:'📝',k:'Tugas yang kamu libas',n:D.td,f:'n',t:D.td?`${D.ontime} selesai tepat waktu (${pc}%).`:'Belum ada tugas yang tercatat selesai.'},
+  {e:cat?cat[0]:'💸',k:'Uang yang keluar',n:D.tot,f:'rp',t:cat?`Paling banyak di ${cat[1]} (${rp(D.top[1])}). Rata-rata ${rp(D.avg)} per hari.${D.big?' Terbesar: '+esc(D.big.note||'-')+' '+rp(D.big.amt)+'.':''}`:'Belum ada pengeluaran tercatat.'},
+  {e:'🔥',k:'Konsistensi rutinitas',n:D.ls,f:'n',u:' hari',t:`Streak terpanjangmu. Total ${D.perf} hari rutinitas sempurna.`},
+  {e:'🤝',k:'Perjalanan '+esc(S.mas.name),b:'Level '+lv(),t:`${ttl(lv())} · ${S.xp} XP.${D.pl?' Janji ditepati '+D.won+' dari '+D.pl+'.':''}`},
+  {e:nk[0],k:'Julukan kamu semester ini',b:nk[1],t:nk[2]},
+  {e:masSVG(110),k:'Terima kasih sudah bertahan 💛',b:'Sampai jumpa!',t:'Bagikan ceritamu ke teman.',x:'<div class="row2" style="justify-content:center;margin-top:10px"><button class="btn" data-a="wrshare">Bagikan 📤</button><button class="btn g" data-a="wrx">Tutup</button></div>'}].map((x,i)=>Object.assign({c:A[i%6]},x))}
+function wrStart(){WR.i=0;WR.D=wrData(WR.p);WR.sl=wrSlides(WR.D);wrShow()}
+function wrShow(){const w=$('#wr'),s=WR.sl[WR.i],last=WR.i===WR.sl.length-1;w.className='on';w.style.setProperty('--c',s.c);
+  w.innerHTML=`<div class="wpg">${WR.sl.map((_,k)=>`<i class="${k<WR.i||(k===WR.i&&last)?'d':k===WR.i?'n':''}"><b></b></i>`).join('')}</div><button class="x wx" data-a="wrx" aria-label="Tutup">✕</button><div class="wsl"><div class="we">${s.e}</div><div class="wk">${s.k}</div><div class="wb"${s.n!==undefined?` data-n="${s.n}" data-f="${s.f}" data-u="${esc(s.u||'')}"`:''}>${s.n!==undefined?'0':s.b}</div><div class="wt">${s.t||''}</div>${s.x||''}</div>`;
+  const el=w.querySelector('.wb[data-n]');if(el){const n=+el.dataset.n,t0=performance.now(),F={n:v=>Math.round(v),rp:v=>rp(v),h:v=>v.toFixed(1).replace(/\.0$/,'')}[el.dataset.f];(function f(t){const k=Math.min(1,(t-t0)/900);el.textContent=F(n*(1-Math.pow(1-k,3)))+el.dataset.u;if(k<1)requestAnimationFrame(f)})(t0)}
+  clearTimeout(WR.t);if(!last)WR.t=setTimeout(()=>{WR.i++;wrShow()},5200)}
+$('#wr').addEventListener('click',e=>{if(e.target.closest('[data-a]'))return;WR.i=Math.max(0,Math.min(WR.sl.length-1,WR.i+(e.clientX<innerWidth*.3?-1:1)));wrShow()});
+async function wrImg(D){const c=cnv(1080,1350),x=c.getContext('2d'),F='Fredoka,ui-rounded,system-ui,sans-serif',nk=nick(D);
+  x.fillStyle=THEMES[S.theme||0].a[0];x.fillRect(0,0,1080,1350);x.fillStyle='#ffffff66';for(let i=0;i<1080;i+=54)for(let j=0;j<1350;j+=54){x.beginPath();x.arc(i+27,j+27,3,0,7);x.fill()}
+  const rr=(a,b,w,h,r)=>{x.beginPath();x.roundRect(a,b+8,w,h,r);x.fillStyle=IK;x.fill();x.beginPath();x.roundRect(a,b,w,h,r);x.fillStyle='#fffdf7';x.fill();x.lineWidth=6;x.strokeStyle=IK;x.stroke()};
+  x.fillStyle=IK;x.textAlign='center';x.font=`700 72px ${F}`;x.fillText('Semester Wrapped',540,125);
+  const im=new Image();await new Promise(r=>{im.onload=r;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(masSVG(260).replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" '))});x.drawImage(im,410,160,260,260);
+  rr(70,450,940,150,40);x.fillStyle=IK;x.font=`700 60px ${F}`;x.fillText(nk[0]+' '+nk[1],540,545,880);x.font=`700 28px ${F}`;x.fillStyle='#7d6b58';x.fillText(nk[2],540,585,880);
+  [['🍅',(D.fm/60).toFixed(1).replace(/\.0$/,'')+' jam','waktu fokus'],['📝',D.td,'tugas selesai'],['💸',rp(D.tot),'pengeluaran'],['🔥',D.ls+' hari','streak terpanjang']].forEach(([e,v,l],i)=>{const a=70+(i%2)*480,b=640+Math.floor(i/2)*270;rr(a,b,460,240,36);x.textAlign='left';x.fillStyle=IK;x.font=`80px ${F}`;x.fillText(e,a+34,b+105);x.font=`700 60px ${F}`;x.fillText(String(v),a+34,b+182,400);x.font=`700 28px ${F}`;x.fillStyle='#7d6b58';x.fillText(l,a+34,b+222,400)});
+  x.textAlign='center';x.fillStyle=IK;x.font=`700 36px ${F}`;x.fillText(`${S.name?S.name+' · ':''}${S.mas.name} · Lv ${lv()} ${ttl(lv())}`,540,1230,960);x.font=`700 30px ${F}`;x.fillStyle='#2b2118b0';x.fillText('KostHub',540,1290);
+  return new Promise((r,j)=>c.toBlob(b=>b?r(b):j(),'image/png'))}
 applyTheme();render(1);sched();runIntro();
 </script>
 </body>
