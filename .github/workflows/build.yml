@@ -20,14 +20,17 @@ jobs:
       - name: Install
         run: npm install
       - name: Siapkan web dan proyek Android
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: |
           mkdir -p www
           cp index.html www/index.html
+          sed -i "s|__GEMINI_KEY__|${GEMINI_KEY}|" www/index.html
           cp node_modules/jspdf/dist/jspdf.umd.min.js www/
           cp node_modules/@fontsource-variable/fredoka/files/fredoka-latin-wght-normal.woff2 www/fredoka.woff2 || echo 'font fredoka tidak ketemu'
           cp node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2 www/nunito.woff2 || echo 'font nunito tidak ketemu'
           npx cap add android
-          sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />\n    <application#' android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />\n    <application#' android/app/src/main/AndroidManifest.xml
       - name: Pasang ikon
         continue-on-error: true
         run: |
