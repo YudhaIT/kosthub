@@ -206,6 +206,17 @@ input,select,textarea{min-height:44px;line-height:1.35}textarea{min-height:88px}
 .it .btn.s{padding:6px 10px;font-size:12px;min-height:34px}.it .mu{line-height:1.4;margin-top:2px}.it>.b{line-height:1.4}
 .card h2{line-height:1.25}.bb{font-size:14.5px;line-height:1.5}.chips{gap:8px}
 @media (max-width:859px){h1,.top h1{font-size:clamp(19px,5.6vw,22px)}.big{font-size:clamp(24px,7.6vw,30px)}body{padding-bottom:116px}nav button{font-size:10px;white-space:nowrap;letter-spacing:-.01em}.mu{font-size:12.5px;line-height:1.45}.sbar input{min-width:0}}
+/* ---- perbaikan mobile ---- */
+.seg.bs .chip{flex-direction:column;gap:3px;min-height:58px;padding:8px 2px;border-radius:18px;line-height:1.1}
+.seg.bs .ci{font-size:19px;line-height:1}.seg.bs .cl{font-size:11.5px;font-weight:800;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cnt{position:absolute;top:5px;right:6px;min-width:17px;height:17px;padding:0 5px;border-radius:9px;background:var(--ink);color:var(--bg);font:800 10.5px/17px Nunito,system-ui,sans-serif;text-align:center}
+.seg.bs .chip.on .cnt{background:#2b2118;color:var(--a)}
+.em.tm{width:auto;min-width:66px;padding:0 10px;font-size:13px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.row2 .chip{white-space:nowrap;flex:0 0 auto}.row2 input[type=range]{flex:1;min-width:0;padding:0}
+/* ---- FAB: plus tepat di tengah ---- */
+.fab{display:block!important;padding:0!important;line-height:0;box-shadow:0 4px 0 var(--shc)!important}
+.fab svg{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px}
+.fab:active{transform:translateY(3px)!important;box-shadow:0 1px 0 var(--shc)!important}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -259,7 +270,7 @@ function vHome(){
   const tk=S.tasks.filter(t=>!t.done).sort((a,b)=>(a.due||'9').localeCompare(b.due||'9')).slice(0,3);
   const dn=S.rdone[today()]||[],rtd=rToday(),rd=rtd.filter(r=>dn.includes(r.id)).length,pc=rtd.length?Math.round(rd/rtd.length*100):0;
   return smartBar()+xpCard()+bkCard()+plCard()+detCard()+coCard()+wrCard()+statRow()+`<div class="card a">${spark()}<div class="mu">Total semua dompet</div><div class="big" data-n="${tot}">${rp(tot)}</div><div class="mu">${S.wallets.length} dompet · pengeluaran bulan ini ${rp(S.tx.filter(t=>t.type==='out'&&t.date.startsWith(today().slice(0,7))).reduce((a,t)=>a+t.amt,0))}</div></div>
-  <div class="two"><div class="card"><h2>🎒 Kuliah hari ini</h2>${cls.length?cls.map(c=>`<div class="it"><div class="em">${esc(c.time)}</div><div class="b">${esc(c.name)}<div class="mu">${esc(c.room||'')}</div></div></div>`).join(''):empty('😴','Kosong! Waktunya rebahan')}</div>
+  <div class="two"><div class="card"><h2>🎒 Kuliah hari ini</h2>${cls.length?cls.map(c=>`<div class="it"><div class="em tm">${esc(c.time)}</div><div class="b">${esc(c.name)}<div class="mu">${esc(c.room||'')}</div></div></div>`).join(''):empty('😴','Kosong! Waktunya rebahan')}</div>
   <div class="card"><h2>⏰ Deadline terdekat</h2>${tk.length?tk.map(t=>`<div class="it"><div class="b">${esc(t.title)}<div class="mu ${t.due&&t.due<today()?'late':''}">${esc(t.due||'tanpa tenggat')}</div></div></div>`).join(''):empty('🎉','Tidak ada tugas nunggak')}</div></div>
   <div class="card" style="margin-top:14px"><h2>🧺 Rutinitas hari ini</h2><div class="bar"><i style="width:${pc}%"></i></div><div class="mu" style="margin-top:6px">${rtd.length?rd+' dari '+rtd.length+' selesai':'Tidak ada kegiatan hari ini'}</div></div>`}
 
@@ -271,16 +282,16 @@ function vKuliah(){
   const seg=`<div class="seg"><button class="chip ${sub==='tugas'?'on':''}" data-a="sub" data-v="tugas">📝 Tugas</button><button class="chip ${sub==='jadwal'?'on':''}" data-a="sub" data-v="jadwal">🗓️ Jadwal</button><button class="chip ${sub==='nilai'?'on':''}" data-a="sub" data-v="nilai">🎓 Nilai</button></div>`;
   if(sub==='nilai')return seg+vNilai();if(sub==='tugas'){const l=[...S.tasks].sort((a,b)=>(a.done-b.done)||(a.due||'9').localeCompare(b.due||'9')).map(t=>{const late=!t.done&&t.due&&t.due<today();return `<div class="it"><input type="checkbox" class="ck" data-a="ttk" data-id="${t.id}" ${t.done?'checked':''}><div class="b ${t.done?'done':''}">${esc(t.title)}<div class="mu">${esc(t.course||'')}${t.course?' · ':''}<span class="${late?'late':''}">${esc(t.due||'tanpa tenggat')}${late?' · lewat!':''}</span></div></div><button class="x" data-a="dtk" data-id="${t.id}">✕</button></div>`}).join('');
     return seg+notifCard()+`<div class="card">${l||empty('📝','Belum ada tugas. Aman!')}</div>`}
-  const l=DAYS.map((d,i)=>{const c=S.classes.filter(x=>x.day===d).sort((a,b)=>a.time.localeCompare(b.time));return c.length?`<div class="card"><h2>${d}${i===todayIdx()?' <span class="chip on" style="font-size:11px;padding:2px 8px">hari ini</span>':''}</h2>${c.map(x=>`<div class="it"><div class="em" style="font-size:12px">${esc(x.time)}</div><div class="b">${esc(x.name)}<div class="mu">${esc(x.room||'-')}</div></div><button class="x" data-a="dcl" data-id="${x.id}">✕</button></div>`).join('')}</div>`:''}).join('');
+  const l=DAYS.map((d,i)=>{const c=S.classes.filter(x=>x.day===d).sort((a,b)=>a.time.localeCompare(b.time));return c.length?`<div class="card"><h2>${d}${i===todayIdx()?' <span class="chip on" style="font-size:11px;padding:2px 8px">hari ini</span>':''}</h2>${c.map(x=>`<div class="it"><div class="em tm">${esc(x.time)}</div><div class="b">${esc(x.name)}<div class="mu">${esc(x.room||'-')}</div></div><button class="x" data-a="dcl" data-id="${x.id}">✕</button></div>`).join('')}</div>`:''}).join('');
   return seg+(l||`<div class="card">${empty('🗓️','Belum ada jadwal kuliah')}</div>`)}
 
 const dayTag=r=>!r.days||r.days.length===7?'Setiap hari':r.days.map(i=>DS[i]).join(' ');
 const rToday=()=>S.routine.filter(r=>!r.days||r.days.includes(todayIdx()));
 function vHarian(){const dn=S.rdone[today()]||[],ti=todayIdx(),all=hsub==='semua',list=(all?[...S.routine]:rToday()).sort((a,b)=>a.time.localeCompare(b.time));
-  const seg=`<div class="seg bs"><button class="chip ${!all?'on':''}" data-a="hsub" data-v="hari">☀️ Hari ini</button><button class="chip ${all?'on':''}" data-a="hsub" data-v="semua">📅 Semua</button><button class="chip ${hsub==='fokus'?'on':''}" data-a="hsub" data-v="fokus">🍅 Fokus</button><button class="chip ${hsub==='kost'?'on':''}" data-a="hsub" data-v="kost">🏠 Kost</button></div>`;
+  const seg=`<div class="seg bs"><button class="chip ${hsub==='hari'?'on':''}" data-a="hsub" data-v="hari"><span class="ci">☀️</span><span class="cl">Hari ini</span></button><button class="chip ${all?'on':''}" data-a="hsub" data-v="semua"><span class="ci">📅</span><span class="cl">Semua</span></button><button class="chip ${hsub==='fokus'?'on':''}" data-a="hsub" data-v="fokus"><span class="ci">🍅</span><span class="cl">Fokus</span></button><button class="chip ${hsub==='kost'?'on':''}" data-a="hsub" data-v="kost"><span class="ci">🏠</span><span class="cl">Kost</span></button></div>`;
   if(hsub==='fokus')return seg+vFokus();
   if(hsub==='kost')return seg+vKost();
-  const l=list.map(r=>all?`<div class="it"><div class="em" style="font-size:12px">${esc(r.time)}</div><div class="b">${esc(r.text)}<div class="mu">${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`:`<div class="it"><input type="checkbox" class="ck" data-a="trt" data-id="${r.id}" ${dn.includes(r.id)?'checked':''}><div class="b ${dn.includes(r.id)?'done':''}">${esc(r.text)}<div class="mu">${esc(r.time)} · ${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`).join('');
+  const l=list.map(r=>all?`<div class="it"><div class="em tm">${esc(r.time)}</div><div class="b">${esc(r.text)}<div class="mu">${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`:`<div class="it"><input type="checkbox" class="ck" data-a="trt" data-id="${r.id}" ${dn.includes(r.id)?'checked':''}><div class="b ${dn.includes(r.id)?'done':''}">${esc(r.text)}<div class="mu">${esc(r.time)} · ${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`).join('');
   return seg+(all?'':streakCard())+`<div class="card"><h2>${all?'Semua kegiatan':DAYS[ti]}</h2>${all?'':'<div class="mu" style="margin-bottom:6px">Checklist reset otomatis tiap hari</div>'}${l||empty('🧺',all?'Belum ada kegiatan':'Hari ini kosong. Tekan + buat nambah')}</div>`}
 
 function bList(){const q=BQ.toLowerCase();
@@ -292,7 +303,7 @@ function bList(){const q=BQ.toLowerCase();
   return Object.entries(g).map(([k,a])=>`<div class="card"><h2>${esc(k)} <span class="mu">${a.length}</span></h2>${a.map(f=>`<div class="it"><div class="em">${/pdf$/i.test(f.name)?'📕':/\.(png|jpe?g|webp|gif)$/i.test(f.name)?'🖼️':'📄'}</div><div class="b">${esc(f.name)}<div class="mu">${esc(f.date)} · ${(f.blob.size/1024).toFixed(0)} KB</div></div><button class="btn s g" data-a="dlf" data-id="${f.id}">Bagikan</button><button class="x" data-a="dff" data-id="${f.id}">✕</button></div>`).join('')}</div>`).join('')}
 function vBerkas(){const n=k=>({materi:files.filter(f=>['Materi kuliah','Lainnya'].includes(f.cat)).length,tugas:files.filter(f=>f.cat==='Lampiran tugas').length,scan:files.filter(f=>f.cat==='Hasil scan').length,catatan:S.notes.length})[k];
   const T=[['materi','📖','Materi'],['tugas','📎','Tugas'],['scan','📷','Scan'],['catatan','📝','Catatan']];
-  return `<div class="seg bs">${T.map(([k,e,l])=>`<button class="chip ${bsub===k?'on':''}" data-a="bsub" data-v="${k}">${e} ${l}<small> ${n(k)}</small></button>`).join('')}</div>${bsub==='scan'?'<button class="btn" style="width:100%;margin-bottom:14px" data-a="bscan">📷 Scan dokumen baru</button>':''}<input id="bq" placeholder="🔍 Cari berkas…" value="${esc(BQ)}" style="margin-bottom:14px"><div id="bl">${bList()}</div>`}
+  return `<div class="seg bs">${T.map(([k,e,l])=>`<button class="chip ${bsub===k?'on':''}" data-a="bsub" data-v="${k}"><span class="ci">${e}</span><span class="cl">${l}</span>${n(k)?`<span class="cnt">${n(k)}</span>`:''}</button>`).join('')}</div>${bsub==='scan'?'<button class="btn" style="width:100%;margin-bottom:14px" data-a="bscan">📷 Scan dokumen baru</button>':''}<input id="bq" placeholder="🔍 Cari berkas…" value="${esc(BQ)}" style="margin-bottom:14px"><div id="bl">${bList()}</div>`}
 document.addEventListener('input',e=>{if(e.target.id==='bq'){BQ=e.target.value;$('#bl').innerHTML=bList()}});
 
 function scanBody(){return `<div class="th">${scanPages.map((p,i)=>`<div><img src="${p.url}" alt="Halaman ${i+1}"><b data-a="dsp" data-i="${i}">✕</b></div>`).join('')}</div><button class="btn g s" data-a="zmore" style="margin-bottom:12px">＋ Tambah halaman</button>${fld('sn','Nama PDF','text','Tugas Statistik')}${fld('sk','Mata kuliah (opsional)')}<button class="btn" style="width:100%" data-a="mkpdf" ${scanPages.length?'':'disabled'}>Buat PDF (${scanPages.length} hal)</button>`}
@@ -458,7 +469,7 @@ const wdIdx=n=>{const d=new Date();d.setDate(d.getDate()-n);return(d.getDay()+6)
 const daysLeft=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth()+1,0).getDate()-n.getDate()+1};
 const spent=c=>{const m=today().slice(0,7);return S.tx.filter(t=>t.type==='out'&&t.date.startsWith(m)&&(t.cat||'lain')===c).reduce((a,t)=>a+t.amt,0)};
 const budTot=()=>{let l=0,sp=0;EXP.forEach(c=>{if(S.budget[c]){l+=S.budget[c];sp+=spent(c)}});return{l,sp}};
-function vUang(){const seg=`<div class="seg bs"><button class="chip ${usub==='dompet'?'on':''}" data-a="usub" data-v="dompet">👛 Dompet</button><button class="chip ${usub==='anggaran'?'on':''}" data-a="usub" data-v="anggaran">🎯 Anggaran</button><button class="chip ${usub==='laporan'?'on':''}" data-a="usub" data-v="laporan">🧾 Laporan</button><button class="chip ${usub==='tahan'?'on':''}" data-a="usub" data-v="tahan">⏳ Tahan</button></div>`;return seg+(usub==='dompet'?vDompet():usub==='anggaran'?vAnggaran():usub==='laporan'?vLaporan():vTahan())}
+function vUang(){const seg=`<div class="seg bs"><button class="chip ${usub==='dompet'?'on':''}" data-a="usub" data-v="dompet"><span class="ci">👛</span><span class="cl">Dompet</span></button><button class="chip ${usub==='anggaran'?'on':''}" data-a="usub" data-v="anggaran"><span class="ci">🎯</span><span class="cl">Anggaran</span></button><button class="chip ${usub==='laporan'?'on':''}" data-a="usub" data-v="laporan"><span class="ci">🧾</span><span class="cl">Laporan</span></button><button class="chip ${usub==='tahan'?'on':''}" data-a="usub" data-v="tahan"><span class="ci">⏳</span><span class="cl">Tahan</span></button></div>`;return seg+(usub==='dompet'?vDompet():usub==='anggaran'?vAnggaran():usub==='laporan'?vLaporan():vTahan())}
 function vAnggaran(){const {l,sp}=budTot(),left=daysLeft(),jt=l?Math.max(0,(l-sp)/left):0;
   const cards=EXP.map(c=>{const L=S.budget[c]||0,s0=spent(c),pc=L?s0/L:0,mood=!L?'🫥 belum diatur':pc>=1?'😱 jebol!':pc>.8?'😬 hati-hati':pc>.5?'🙂 aman':'😎 santai';
     return `<div class="card bc" data-a="bset" data-id="${c}"><div class="row2"><div class="em">${CATS[c][0]}</div><div style="flex:1"><b>${CATS[c][1]}</b><div class="mu">${rp(s0)}${L?' / '+rp(L):''} · ${mood}</div></div></div><div class="bar ${pc>=1?'red':pc>.8?'yel':''}"><i style="width:${Math.min(100,pc*100)}%"></i></div></div>`}).join('');
@@ -546,8 +557,8 @@ function xAct(a,b){const id=b.dataset.id,v=b.dataset.v;switch(a){
   case 'aic':AI[b.dataset.g]=v;render();return 1;
   case 'aigo':aiChef();return 1;
   case 'vmic':voiceStart(v);return 1;
-  case 'vend':voiceEnd(true);return 1;
-  case 'vcan':voiceEnd(false);return 1;
+  case 'vend':if(VR.on&&!VR.fin)voiceEnd(true);else closeSheet();return 1;
+  case 'vcan':if(VR.on&&!VR.fin)voiceEnd(false);else closeSheet();return 1;
   case 'sbio':sbioToggle();return 1;
   case 'bioauth':bioUnlock();return 1;
   case 'colat':coLatSheet();return 1;
@@ -780,7 +791,10 @@ if(embKey()&&!S.aiKey&&!S.aiKeyG)S.aiProv='gemini';
 const gemKey=()=>S.aiKeyG||embKey();
 const gemReq=()=>{const k=gemKey(),m=encodeURIComponent(aiMd());return k.startsWith('AQ.')?{u:`https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent?key=${encodeURIComponent(k)}`,h:{'content-type':'application/json'}}:{u:`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,h:{'content-type':'application/json','x-goog-api-key':k}}};
 const gemCfg=n=>Object.assign({responseMimeType:'application/json',maxOutputTokens:n},/^gemini-3/.test(aiMd())?{thinkingConfig:{thinkingLevel:'minimal'}}:{});
-const tfetch=(u,o)=>Promise.race([fetch(u,o),new Promise((_,j)=>setTimeout(()=>j(new Error('Terlalu lama merespons, coba lagi')),45000))]);
+const tfetch=async(u,o)=>{const lim=f=>Promise.race([f(u,o),new Promise((_,j)=>setTimeout(()=>j(new Error('Terlalu lama merespons, coba lagi')),45000))]);
+  let r;try{r=await lim(fetch)}catch(e){if(window.CapacitorWebFetch&&!/lama/.test(String(e&&e.message)))r=await lim(window.CapacitorWebFetch);else throw e}
+  if(!r.ok&&/aiplatform\.googleapis\.com/.test(u)&&[400,401,403,404].includes(r.status)){const m=u.match(/models\/([^:]+):generateContent/);if(m){try{const a=await Promise.race([fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m[1]+':generateContent',{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':gemKey()},body:o.body}),new Promise((_,j)=>setTimeout(j,45000))]);if(a.ok)return a}catch(e){}}}
+  return r};
 const aiK=()=>S.aiProv==='gemini'?gemKey():S.aiKey,aiMd=()=>(S.aiMod&&S.aiMod[S.aiProv])||(S.aiProv==='gemini'?'gemini-3.5-flash':'claude-haiku-5-5');
 async function aiChef(){if(!aiK())return aiKeySheet();if(AI.busy)return;AI.busy=true;render();
   try{let r,d,tx;const g=S.aiProv==='gemini';
@@ -793,7 +807,7 @@ async function aiChef(){if(!aiK())return aiKeySheet();if(AI.busy)return;AI.busy=
       tx=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('')}
     const j=JSON.parse(tx.slice(tx.indexOf('{'),tx.lastIndexOf('}')+1));
     if(!Array.isArray(j.ide)||!j.ide.length)throw new Error('Jawaban AI kosong');S.aiLast={t:Date.now(),ide:j.ide.slice(0,8)};save();toast('Chef AI punya '+S.aiLast.ide.length+' ide 🍳')}
-  catch(e){const m=String(e&&e.message||e);toast(e instanceof SyntaxError?'Jawaban AI tidak terbaca, coba lagi':/fetch|network/i.test(m)?'Tidak bisa terhubung. Cek internet kamu':m)}
+  catch(e){const m=String(e&&e.message||e);toast(e instanceof SyntaxError?'Jawaban AI tidak terbaca, coba lagi':/fetch|network/i.test(m)?'Tidak bisa terhubung ('+m+'). Cek internet dan API key':m)}
   finally{AI.busy=false;render()}}
 function aiRow(r,i,src){const miss=(r.bahan||[]).filter(b=>!hv(String(b.n).toLowerCase()));return `<div class="card bc" data-a="aircp" data-v="${src}" data-id="${i}"><div class="row2"><div class="em" style="font-size:24px">${esc(r.emoji||'🍽️')}</div><div style="flex:1;min-width:0"><b>${esc(r.nama)}</b><div class="mu">⏱ ${esc(r.menit)} mnt · ~Rp${esc(r.biaya_rb)}rb${miss.length?' · kurang: '+esc(miss.map(b=>b.n).join(', ')):''}</div></div>${miss.length?'':'<span class="chip on">Bisa!</span>'}</div></div>`}
 function aiCard(){const ch=(g,L)=>`<div class="chips" style="margin:6px 0 10px">${L.map(([v,l])=>`<button class="chip ${AI[g]===v?'on':''}" data-a="aic" data-g="${g}" data-v="${v}">${l}</button>`).join('')}</div>`,res=(S.aiLast&&S.aiLast.ide)||[];
@@ -839,7 +853,7 @@ async function chSend(txt){txt=(txt||'').trim();if(!txt||CH.busy)return;if(!aiK(
   try{const msgs=[];S.chatH.filter(m=>!m.err).slice(-12).forEach(m=>{if(msgs.length&&msgs[msgs.length-1].r===m.r)msgs[msgs.length-1].t+='\n'+m.t;else msgs.push({r:m.r,t:m.t})});while(msgs.length&&msgs[0].r!=='user')msgs.shift();
     const raw=await aiCall(chatSys(),msgs,1500);let j;try{j=JSON.parse(raw.slice(raw.indexOf('{'),raw.lastIndexOf('}')+1))}catch(e){j={balas:raw}}
     S.chatH.push({r:'assistant',t:String(j.balas||'Hmm, aku bingung jawabnya 😅'),a:Array.isArray(j.aksi)?j.aksi.slice(0,12):[],ap:false})}
-  catch(e){const m=String(e&&e.message||e);S.chatH.push({r:'assistant',t:'😵 '+(/fetch|network/i.test(m)?'Aku nggak bisa terhubung. Cek internet kamu ya.':m),a:[],ap:true,err:1})}
+  catch(e){const m=String(e&&e.message||e);S.chatH.push({r:'assistant',t:'😵 '+(/fetch|network/i.test(m)?'Aku nggak bisa terhubung ('+m+'). Cek internet dan API key kamu ya.':m),a:[],ap:true,err:1})}
   save();CH.busy=false;chatPaint()}
 function chApply(i){const m=S.chatH[i];if(!m||m.ap)return;let n=0;
   (m.a||[]).forEach(a=>{try{
@@ -962,13 +976,16 @@ function w2n(t){const U={nol:0,satu:1,dua:2,tiga:3,empat:4,lima:5,enam:6,tujuh:7
 let VR={on:false,txt:'',h:[],tg:'smart'};
 async function voiceStart(tg){const P=plug('SpeechRecognition');if(!P)return toast('Suara hanya jalan di APK. Update package.json lalu build ulang');if(VR.on)return voiceEnd(true);
   try{const a=await P.available();if(!a.available)return toast('Pengenalan suara tidak tersedia di HP ini');const pm=await P.requestPermissions();if(pm.speechRecognition!=='granted')return toast('Izin mikrofon ditolak');
-    VR={on:true,txt:'',h:[],tg};openSheet('🎙️ Lagi mendengarkan…','<div class="empty"><div class="vmic">🎙️</div><div id="vtx" style="font-size:16px;min-height:44px;color:var(--ink)">Silakan bicara…</div></div><div class="row2"><button class="btn" style="flex:1" data-a="vend">Selesai</button><button class="btn g" style="flex:1" data-a="vcan">Batal</button></div>');
+    VR={on:true,fin:false,txt:'',h:[],tg};openSheet('🎙️ Lagi mendengarkan…','<div class="empty"><div class="vmic">🎙️</div><div id="vtx" style="font-size:16px;min-height:44px;color:var(--ink)">Silakan bicara…</div></div><div class="row2"><button class="btn" style="flex:1" data-a="vend">Selesai</button><button class="btn g" style="flex:1" data-a="vcan">Batal</button></div>');
     VR.h.push(await P.addListener('partialResults',d=>{if(d.matches&&d.matches[0]){VR.txt=d.matches[0];const e=$('#vtx');if(e)e.textContent=VR.txt}}));
     VR.h.push(await P.addListener('listeningState',d=>{if(d.status==='stopped')setTimeout(()=>voiceEnd(true),350)}));
     await P.start({language:'id-ID',maxResults:1,partialResults:true,popup:false})}
   catch(e){voiceEnd(false);toast('Gagal memulai suara: '+(e&&e.message||e))}}
-async function voiceEnd(go){if(!VR.on)return;VR.on=false;const P=plug('SpeechRecognition'),t=VR.txt.trim(),tg=VR.tg;try{if(P)await P.stop()}catch(e){}VR.h.forEach(h=>{try{h.remove()}catch(e){}});VR.h=[];closeSheet();
-  if(!go)return;if(!t)return toast('Tidak terdengar apa pun, coba lagi');if(tg==='smart')smartOpen(t);else{const i=$('#'+tg);if(i){i.value=(i.value?i.value+' ':'')+t;i.focus()}}}
+function voiceEnd(go){if(VR.fin)return;VR.fin=true;VR.on=false;const P=plug('SpeechRecognition'),t=VR.txt.trim(),tg=VR.tg,hs=VR.h;VR.h=[];
+  closeSheet();
+  (async()=>{try{if(P)await Promise.race([P.stop(),new Promise(r=>setTimeout(r,800))])}catch(e){}hs.forEach(h=>{try{h.remove()}catch(e){}})})();
+  if(!go)return;if(!t)return toast('Tidak terdengar apa pun, coba lagi');
+  setTimeout(()=>{try{if(tg==='smart'){const i=$('#sbi');if(i)i.value=t;smartOpen(t)}else if(tg==='chin')chSend(t);else if(tg==='coin')coSend(t)}catch(e){toast('Gagal memproses suara: '+(e&&e.message||e))}},240)}
 // Sidik jari
 async function bioAuth(){const P=plug('NativeBiometric');if(!P){toast('Sidik jari belum ada di build ini');return false}
   try{await P.verifyIdentity({reason:'Buka KostHub',title:'Buka KostHub',subtitle:'Tempelkan jari kamu',negativeButtonText:'Pakai PIN',useFallback:false,maxAttempts:3});return true}catch(e){return false}}
@@ -1003,7 +1020,7 @@ async function coSend(t){t=(t||'').trim();if(!t||CO.busy||CO.done)return;if(!aiK
     CO.hist.filter(m=>!m.err).forEach(m=>{if(msgs.length&&msgs[msgs.length-1].r===m.r)msgs[msgs.length-1].t+='\n'+m.t;else msgs.push({r:m.r,t:m.t})});while(msgs.length&&msgs[0].r!=='user')msgs.shift();
     const raw=await aiCall(CO.mode==='latih'?latihSys(asked,ua):ajariSys(ua),msgs,1800);let j;try{j=JSON.parse(raw.slice(raw.indexOf('{'),raw.lastIndexOf('}')+1))}catch(e){j={balas:raw}}
     const m={r:'assistant',t:String(j.balas||'…')};if(j.selesai){m.res=j;CO.done=true;xp(CO.mode==='latih'?20:15,'co:'+Date.now());conf(innerWidth/2,innerHeight/3,['🎓','⭐','✨'])}CO.hist.push(m)}
-  catch(e){const m=String(e&&e.message||e);CO.hist.push({r:'assistant',t:'😵 '+(/fetch|network/i.test(m)?'Aku nggak bisa terhubung. Cek internet kamu ya.':m),err:1})}
+  catch(e){const m=String(e&&e.message||e);CO.hist.push({r:'assistant',t:'😵 '+(/fetch|network/i.test(m)?'Aku nggak bisa terhubung ('+m+'). Cek internet dan API key kamu ya.':m),err:1})}
   CO.busy=false;coPaint()}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='coin'){e.preventDefault();const t=e.target.value;e.target.value='';coSend(t)}});
 if(window.visualViewport){const f=()=>{const c=$('#coach'),v=visualViewport;c.style.top=v.offsetTop+'px';c.style.height=v.height+'px'};visualViewport.addEventListener('resize',f);visualViewport.addEventListener('scroll',f)}
