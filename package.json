@@ -11,6 +11,8 @@
     "jspdf": "^2.5.1",
     "@capacitor/local-notifications": "^6.1.0",
     "@fontsource-variable/fredoka": "^5.1.0",
-    "@fontsource-variable/nunito": "^5.1.0"
+    "@fontsource-variable/nunito": "^5.1.0",
+    "@capacitor-community/speech-recognition": "^6.0.0",
+    "@capgo/capacitor-native-biometric": "^6.0.0"
   }
 }

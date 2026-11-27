@@ -172,6 +172,8 @@ nav button{position:relative;z-index:1}nav button span{line-height:0;margin-bott
 .wx{position:absolute;right:10px;top:calc(24px + env(safe-area-inset-top,0px));font-size:22px;color:#2b2118}
 .wsl{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px 28px;gap:10px}.we{font-size:72px;line-height:1;animation:pop .5s both}.wk{font:700 18px Fredoka,ui-rounded,system-ui,sans-serif;opacity:.7;animation:fin .5s both}
 .wb{font:700 clamp(40px,14vw,68px)/1.05 Fredoka,ui-rounded,system-ui,sans-serif;animation:pop .6s .1s both;font-variant-numeric:tabular-nums}.wt{font-size:17px;max-width:320px;line-height:1.5;animation:fin .6s .3s both}
+#coach{position:fixed;inset:0;z-index:40;background:var(--bg);display:none;flex-direction:column}#coach.on{display:flex;animation:fd .25s}
+#com{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}.vmic{font-size:56px;animation:bob 1s ease-in-out infinite}.act details{margin:4px 0}.act summary{cursor:pointer}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -183,6 +185,7 @@ nav button{position:relative;z-index:1}nav button span{line-height:0;margin-bott
 <div id="fabw"></div>
 <div id="scn"></div>
 <div id="chat"></div>
+<div id="coach"></div>
 <div id="wr"></div>
 <div id="ov"><div id="sh"></div></div>
 <script src="jspdf.umd.min.js"></script>
@@ -195,7 +198,7 @@ const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth
 const DAYS=['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
 const CATS={makan:['🍜','Makan'],kos:['🏠','Kos'],jalan:['🚌','Transport'],kuliah:['📚','Kuliah'],jajan:['🧋','Jajan'],lain:['💸','Lainnya'],gaji:['💰','Kiriman']};
 const KEY='kosthub-v1';
-let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[],budget:{},hist:{},stock:[],courses:[],notif:false,tgt:3.5,rem:24,mas:{color:'#fff7e6',hat:'toga',name:'Kosti'},theme:0,mode:'auto',pin:'',name:'',seen:false,xp:0,xpd:{},xph:{},fs:{},pl:[],fh:{},aiKey:'',aiLast:null,rfav:[],aiProv:'gemini',aiKeyG:'',aiMod:{claude:'claude-haiku-5-5',gemini:'gemini-3.5-flash'},chatH:[],sup:[],vault:[],vbk:false,snd:{scene:'hujan',vol:.5}};
+let S={wallets:[{id:'w1',name:'Cash',init:0},{id:'w2',name:'ATM',init:0},{id:'w3',name:'GoPay',init:0}],tx:[],classes:[],tasks:[],routine:[],rdone:{},notes:[],budget:{},hist:{},stock:[],courses:[],notif:false,tgt:3.5,rem:24,mas:{color:'#fff7e6',hat:'toga',name:'Kosti'},theme:0,mode:'auto',pin:'',name:'',seen:false,xp:0,xpd:{},xph:{},fs:{},pl:[],fh:{},aiKey:'',aiLast:null,rfav:[],aiProv:'gemini',aiKeyG:'',aiMod:{claude:'claude-haiku-5-5',gemini:'gemini-3.5-flash'},chatH:[],sup:[],vault:[],vbk:false,snd:{scene:'hujan',vol:.5},bio:false,hold:[]};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(save.t);save.t=setTimeout(()=>typeof sched==='function'&&sched(),700)};
 const DS=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];let hsub='hari';
@@ -216,14 +219,14 @@ const chips=(g,list,def)=>{CV[g]=def;return `<div class="chips" data-g="${g}">${
 const todayIdx=()=>(new Date().getDay()+6)%7;
 
 function openSheet(title,html,label,fn){onSave=fn;$('#sh').innerHTML=`<div class="grab"></div><div class="row" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="margin:0;font-size:21px">${title}</h2><button class="x" data-a="close">✕</button></div>${html}${label?`<button class="btn" style="width:100%;margin-top:6px" data-a="sv">${label}</button>`:''}`;$('#ov').classList.add('on')}
-const closeSheet=()=>{$('#ov').classList.remove('on');onSave=null};
+const closeSheet=()=>{$('#ov').classList.remove('on');onSave=null;if(typeof VR!=='undefined'&&VR.on)voiceEnd(false)};
 
 function vHome(){
   const tot=S.wallets.reduce((a,w)=>a+bal(w),0),h=new Date().getHours();
   const cls=S.classes.filter(c=>c.day===DAYS[todayIdx()]).sort((a,b)=>a.time.localeCompare(b.time));
   const tk=S.tasks.filter(t=>!t.done).sort((a,b)=>(a.due||'9').localeCompare(b.due||'9')).slice(0,3);
   const dn=S.rdone[today()]||[],rtd=rToday(),rd=rtd.filter(r=>dn.includes(r.id)).length,pc=rtd.length?Math.round(rd/rtd.length*100):0;
-  return smartBar()+xpCard()+bkCard()+plCard()+detCard()+wrCard()+statRow()+`<div class="card a">${spark()}<div class="mu">Total semua dompet</div><div class="big" data-n="${tot}">${rp(tot)}</div><div class="mu">${S.wallets.length} dompet · pengeluaran bulan ini ${rp(S.tx.filter(t=>t.type==='out'&&t.date.startsWith(today().slice(0,7))).reduce((a,t)=>a+t.amt,0))}</div></div>
+  return smartBar()+xpCard()+bkCard()+plCard()+detCard()+coCard()+wrCard()+statRow()+`<div class="card a">${spark()}<div class="mu">Total semua dompet</div><div class="big" data-n="${tot}">${rp(tot)}</div><div class="mu">${S.wallets.length} dompet · pengeluaran bulan ini ${rp(S.tx.filter(t=>t.type==='out'&&t.date.startsWith(today().slice(0,7))).reduce((a,t)=>a+t.amt,0))}</div></div>
   <div class="two"><div class="card"><h2>🎒 Kuliah hari ini</h2>${cls.length?cls.map(c=>`<div class="it"><div class="em">${esc(c.time)}</div><div class="b">${esc(c.name)}<div class="mu">${esc(c.room||'')}</div></div></div>`).join(''):empty('😴','Kosong! Waktunya rebahan')}</div>
   <div class="card"><h2>⏰ Deadline terdekat</h2>${tk.length?tk.map(t=>`<div class="it"><div class="b">${esc(t.title)}<div class="mu ${t.due&&t.due<today()?'late':''}">${esc(t.due||'tanpa tenggat')}</div></div></div>`).join(''):empty('🎉','Tidak ada tugas nunggak')}</div></div>
   <div class="card" style="margin-top:14px"><h2>🧺 Rutinitas hari ini</h2><div class="bar"><i style="width:${pc}%"></i></div><div class="mu" style="margin-top:6px">${rtd.length?rd+' dari '+rtd.length+' selesai':'Tidak ada kegiatan hari ini'}</div></div>`}
@@ -242,7 +245,7 @@ function vKuliah(){
 const dayTag=r=>!r.days||r.days.length===7?'Setiap hari':r.days.map(i=>DS[i]).join(' ');
 const rToday=()=>S.routine.filter(r=>!r.days||r.days.includes(todayIdx()));
 function vHarian(){const dn=S.rdone[today()]||[],ti=todayIdx(),all=hsub==='semua',list=(all?[...S.routine]:rToday()).sort((a,b)=>a.time.localeCompare(b.time));
-  const seg=`<div class="seg"><button class="chip ${!all?'on':''}" data-a="hsub" data-v="hari">☀️ Hari ini</button><button class="chip ${all?'on':''}" data-a="hsub" data-v="semua">📅 Semua</button><button class="chip ${hsub==='fokus'?'on':''}" data-a="hsub" data-v="fokus">🍅 Fokus</button><button class="chip ${hsub==='kost'?'on':''}" data-a="hsub" data-v="kost">🏠 Kost</button></div>`;
+  const seg=`<div class="seg bs"><button class="chip ${!all?'on':''}" data-a="hsub" data-v="hari">☀️ Hari ini</button><button class="chip ${all?'on':''}" data-a="hsub" data-v="semua">📅 Semua</button><button class="chip ${hsub==='fokus'?'on':''}" data-a="hsub" data-v="fokus">🍅 Fokus</button><button class="chip ${hsub==='kost'?'on':''}" data-a="hsub" data-v="kost">🏠 Kost</button></div>`;
   if(hsub==='fokus')return seg+vFokus();
   if(hsub==='kost')return seg+vKost();
   const l=list.map(r=>all?`<div class="it"><div class="em" style="font-size:12px">${esc(r.time)}</div><div class="b">${esc(r.text)}<div class="mu">${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`:`<div class="it"><input type="checkbox" class="ck" data-a="trt" data-id="${r.id}" ${dn.includes(r.id)?'checked':''}><div class="b ${dn.includes(r.id)?'done':''}">${esc(r.text)}<div class="mu">${esc(r.time)} · ${dayTag(r)}</div></div><button class="x" data-a="drt" data-id="${r.id}">✕</button></div>`).join('');
@@ -277,6 +280,7 @@ async function render(an){plSweep();
 
 function fab(){
   if(tab==='uang'&&usub==='anggaran')return budSheet();
+  if(tab==='uang'&&usub==='tahan')return holdSheet();
   if(tab==='harian'&&hsub==='kost')return supSheet();
   if(tab==='kuliah'&&sub==='nilai')return courseSheet();
   const wo=S.wallets.map(w=>`<option value="${esc(w.id)}">${esc(w.name)}</option>`).join('');
@@ -422,7 +426,7 @@ const wdIdx=n=>{const d=new Date();d.setDate(d.getDate()-n);return(d.getDay()+6)
 const daysLeft=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth()+1,0).getDate()-n.getDate()+1};
 const spent=c=>{const m=today().slice(0,7);return S.tx.filter(t=>t.type==='out'&&t.date.startsWith(m)&&(t.cat||'lain')===c).reduce((a,t)=>a+t.amt,0)};
 const budTot=()=>{let l=0,sp=0;EXP.forEach(c=>{if(S.budget[c]){l+=S.budget[c];sp+=spent(c)}});return{l,sp}};
-function vUang(){const seg=`<div class="seg"><button class="chip ${usub==='dompet'?'on':''}" data-a="usub" data-v="dompet">👛 Dompet</button><button class="chip ${usub==='anggaran'?'on':''}" data-a="usub" data-v="anggaran">🎯 Anggaran</button><button class="chip ${usub==='laporan'?'on':''}" data-a="usub" data-v="laporan">🧾 Laporan</button></div>`;return seg+(usub==='dompet'?vDompet():usub==='anggaran'?vAnggaran():vLaporan())}
+function vUang(){const seg=`<div class="seg bs"><button class="chip ${usub==='dompet'?'on':''}" data-a="usub" data-v="dompet">👛 Dompet</button><button class="chip ${usub==='anggaran'?'on':''}" data-a="usub" data-v="anggaran">🎯 Anggaran</button><button class="chip ${usub==='laporan'?'on':''}" data-a="usub" data-v="laporan">🧾 Laporan</button><button class="chip ${usub==='tahan'?'on':''}" data-a="usub" data-v="tahan">⏳ Tahan</button></div>`;return seg+(usub==='dompet'?vDompet():usub==='anggaran'?vAnggaran():usub==='laporan'?vLaporan():vTahan())}
 function vAnggaran(){const {l,sp}=budTot(),left=daysLeft(),jt=l?Math.max(0,(l-sp)/left):0;
   const cards=EXP.map(c=>{const L=S.budget[c]||0,s0=spent(c),pc=L?s0/L:0,mood=!L?'🫥 belum diatur':pc>=1?'😱 jebol!':pc>.8?'😬 hati-hati':pc>.5?'🙂 aman':'😎 santai';
     return `<div class="card bc" data-a="bset" data-id="${c}"><div class="row2"><div class="em">${CATS[c][0]}</div><div style="flex:1"><b>${CATS[c][1]}</b><div class="mu">${rp(s0)}${L?' / '+rp(L):''} · ${mood}</div></div></div><div class="bar ${pc>=1?'red':pc>.8?'yel':''}"><i style="width:${Math.min(100,pc*100)}%"></i></div></div>`}).join('');
@@ -470,6 +474,7 @@ async function toggleNotif(){const n=LN();if(!window.Capacitor||!Capacitor.isNat
 async function sched(){const n=LN();if(!n||!S.notif)return;try{const q=await n.getPending();if(q.notifications.length){const old=q.notifications.filter(x=>x.id!==777);if(old.length)await n.cancel({notifications:old})}const L=[],now=Date.now();let id=1;
   S.tasks.filter(t=>!t.done&&t.due).forEach(t=>{const [y,m,d]=t.due.split('-').map(Number);[[new Date(y,m-1,d-1,19,0),'Besok deadline: '],[new Date(y,m-1,d,7,0),'Hari ini deadline: ']].forEach(([at,pre])=>{if(at.getTime()>now)L.push({id:id++,title:'KostHub ⏰',body:pre+t.title,schedule:{at,allowWhileIdle:true}})})});
   (S.sup||[]).forEach(x=>{const i=supInfo(x);if(!i.n)return;const d=new Date(i.next+'T09:00:00');d.setDate(d.getDate()-2);if(d.getTime()>now)L.push({id:id++,title:'KostHub 🔌',body:x.name+' diperkirakan habis 2 hari lagi',schedule:{at:d,allowWhileIdle:true}})});
+  (S.hold||[]).filter(h=>h.st==='wait'&&holdReady(h)>now).forEach(h=>L.push({id:id++,title:'KostHub ⏳',body:'Masih mau beli '+h.name+'? Waktunya memutuskan',schedule:{at:new Date(holdReady(h)),allowWhileIdle:true}}));
   if(L.length)await n.schedule({notifications:L})}catch(e){}}
 function xAct(a,b){const id=b.dataset.id,v=b.dataset.v;switch(a){
   case 'usub':usub=v;render();return 1;
@@ -508,6 +513,20 @@ function xAct(a,b){const id=b.dataset.id,v=b.dataset.v;switch(a){
   case 'aidel':if(S.aiProv==='gemini')S.aiKeyG='';else S.aiKey='';save();closeSheet();render();return 1;
   case 'aic':AI[b.dataset.g]=v;render();return 1;
   case 'aigo':aiChef();return 1;
+  case 'vmic':voiceStart(v);return 1;
+  case 'vend':voiceEnd(true);return 1;
+  case 'vcan':voiceEnd(false);return 1;
+  case 'sbio':sbioToggle();return 1;
+  case 'bioauth':bioUnlock();return 1;
+  case 'colat':coLatSheet();return 1;
+  case 'coaj':coAjSheet();return 1;
+  case 'cox':$('#coach').className='';return 1;
+  case 'cosend':{const i=$('#coin');if(i){const t=i.value;i.value='';coSend(t)}return 1}
+  case 'codone':coSend('Selesai, tolong nilai aku sekarang.');return 1;
+  case 'comenu':$('#coach').className='';openSheet('Latihan & belajar','<div class="grid"><button class="btn" data-a="colat">🎤 Latihan presentasi</button><button class="btn g" data-a="coaj">🧠 Ajari maskot</button></div>');return 1;
+  case 'hbuy':holdBuy(id);return 1;
+  case 'hskip':{const h=S.hold.find(x=>x.id===id);if(h){h.st='skip';save();xp(5,'hs:'+id);conf(innerWidth/2,innerHeight/3,['💰','✨','💪']);toast('Hemat '+rp(h.price)+'! 💰');render()}return 1}
+  case 'hdel':S.hold=S.hold.filter(x=>x.id!==id);save();render();return 1;
   case 'lpp':LP=v;render();return 1;
   case 'lppdf':lapPDF();return 1;
   case 'lpimg':lapImg();return 1;
@@ -542,7 +561,7 @@ function xAct(a,b){const id=b.dataset.id,v=b.dataset.v;switch(a){
   case 'shat':if(HN[v]>lv())return toast('Terbuka di level '+HN[v]+' 🔒'),1;S.mas.hat=v;save();stRef();return 1;
   case 'sth':if(TN[+v]>lv())return toast('Terbuka di level '+TN[+v]+' 🔒'),1;S.theme=+v;save();stRef();return 1;
   case 'smode':S.mode=v;save();stRef();return 1;
-  case 'spin':if(v==='new')pinOpen('set1');else if(v==='chg')pinOpen('old',()=>pinOpen('set1'));else if(v==='del')pinOpen('old',()=>{S.pin='';save();stRef();toast('PIN dihapus')});else{closeSheet();pinOpen('check')}return 1;
+  case 'spin':if(v==='new')pinOpen('set1');else if(v==='chg')pinOpen('old',()=>pinOpen('set1'));else if(v==='del')pinOpen('old',()=>{S.pin='';S.bio=false;save();stRef();toast('PIN dihapus')});else{closeSheet();pinOpen('check')}return 1;
   case 'pk':pinKey(v);return 1;
   case 'ntest':{const n=LN();if(n)n.schedule({notifications:[{id:999,title:'KostHub 🔔',body:'Tes pengingat berhasil!',schedule:{at:new Date(Date.now()+4000)}}]}).then(()=>toast('Tunggu 4 detik…')).catch(e=>toast('Gagal: '+(e&&e.message||e)));return 1}
   case 'hint':HI++;render();return 1}return 0}
@@ -559,16 +578,16 @@ function settingsBody(){const m=S.mas,L=(t,h)=>`<div class="mu" style="margin-to
   L('Topi',HATS.map(([k,l])=>`<button class="chip ${m.hat===k?'on':''}" data-a="shat" data-v="${k}">${l}${HN[k]>lv()?' 🔒Lv'+HN[k]:''}</button>`).join(''))+
   L('Tema warna',THEMES.map((t,i)=>`<button class="chip ${S.theme===i?'on':''}" data-a="sth" data-v="${i}"><span class="dots2">${t.a.slice(0,4).map(c=>`<b style="background:${c}"></b>`).join('')}</span> ${t.n}${TN[i]>lv()?' 🔒Lv'+TN[i]:''}</button>`).join(''))+
   L('Mode tampilan',[['auto','🌗 Otomatis'],['terang','☀️ Terang'],['gelap','🌙 Gelap']].map(([k,l])=>`<button class="chip ${S.mode===k?'on':''}" data-a="smode" data-v="${k}">${l}</button>`).join(''))+
-  L('Keamanan',S.pin?'<button class="chip on" data-a="spin" data-v="chg">🔑 Ganti PIN</button><button class="chip" data-a="spin" data-v="del">🗑️ Hapus PIN</button><button class="chip" data-a="spin" data-v="now">🔒 Kunci sekarang</button>':'<button class="chip on" data-a="spin" data-v="new">🔒 Pasang PIN</button>')+(S.pin?'<div class="mu">Lupa PIN? Data bisa dihapus lewat Pengaturan Android → Aplikasi → KostHub → Hapus data.</div>':'')+L('Data & backup','<button class="chip on" data-a="bkup">💾 Buat backup</button><label class="chip">📥 Pulihkan<input id="bkf" type="file" accept=".json,application/json" hidden></label>')+'<div class="mu">'+(S.lastBackup?'Backup terakhir: '+S.lastBackup:'Belum pernah backup')+'. File backup berisi semua data dan berkas, kecuali PIN.</div><div style="height:12px"></div>'}
+  L('Keamanan',S.pin?'<button class="chip on" data-a="spin" data-v="chg">🔑 Ganti PIN</button><button class="chip" data-a="spin" data-v="del">🗑️ Hapus PIN</button><button class="chip" data-a="spin" data-v="now">🔒 Kunci sekarang</button><button class="chip '+(S.bio?'on':'')+'" data-a="sbio">👆 Sidik jari: '+(S.bio?'ON':'OFF')+'</button>':'<button class="chip on" data-a="spin" data-v="new">🔒 Pasang PIN</button>')+(S.pin?'<div class="mu">Lupa PIN? Data bisa dihapus lewat Pengaturan Android → Aplikasi → KostHub → Hapus data.</div>':'')+L('Data & backup','<button class="chip on" data-a="bkup">💾 Buat backup</button><label class="chip">📥 Pulihkan<input id="bkf" type="file" accept=".json,application/json" hidden></label>')+'<div class="mu">'+(S.lastBackup?'Backup terakhir: '+S.lastBackup:'Belum pernah backup')+'. File backup berisi semua data dan berkas, kecuali PIN.</div><div style="height:12px"></div>'}
 const settings=f=>openSheet(f?'Kenalan dulu yuk 👋':'Pengaturan','<div id="stb">'+settingsBody()+'</div>','Selesai',()=>true);
 const stRef=()=>{const b=$('#stb');if(b){const y=$('#sh').scrollTop;b.innerHTML=settingsBody();$('#sh').scrollTop=y}applyTheme();render()};
 document.addEventListener('input',e=>{if(e.target.id==='un'){S.name=e.target.value;save()}else if(e.target.id==='mn'){S.mas.name=e.target.value.trim()||'Kosti';save()}});
 // PIN
 let PN={buf:'',mode:'check',first:'',cb:null},HID=0;
 const hashPin=async p=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('kosthub'+p));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return 'x'+btoa(p)}};
-function pinOpen(mode,cb){PN={buf:'',mode,first:'',cb};pinRender()}
+function pinOpen(mode,cb){PN={buf:'',mode,first:'',cb};pinRender();if(S.bio&&(mode==='check'||mode==='vk'))setTimeout(bioUnlock,250)}
 function pinRender(){const L=$('#lock'),T={check:'Halo! Masukkan PIN',old:'Masukkan PIN lama',vk:'Buka brankas: masukkan PIN',set1:'Buat PIN 4 angka',set2:'Ulangi PIN-nya'}[PN.mode];L.className='on';
-  L.innerHTML=`<div class="lk"><div class="lkm">${masSVG(92)}</div><h2 style="justify-content:center;margin-top:4px">${T}</h2><div class="pd" id="pd">${[0,1,2,3].map(i=>`<i class="${i<PN.buf.length?'on':''}"></i>`).join('')}</div><div class="pad">${[1,2,3,4,5,6,7,8,9,'x',0,'⌫'].map(k=>k==='x'?(PN.mode==='check'?'<span></span>':'<button data-a="pk" data-v="c">Batal</button>'):`<button data-a="pk" data-v="${k}">${k}</button>`).join('')}</div></div>`}
+  L.innerHTML=`<div class="lk"><div class="lkm">${masSVG(92)}</div><h2 style="justify-content:center;margin-top:4px">${T}</h2><div class="pd" id="pd">${[0,1,2,3].map(i=>`<i class="${i<PN.buf.length?'on':''}"></i>`).join('')}</div><div class="pad">${[1,2,3,4,5,6,7,8,9,'x',0,'⌫'].map(k=>k==='x'?(PN.mode==='check'?'<span></span>':'<button data-a="pk" data-v="c">Batal</button>'):`<button data-a="pk" data-v="${k}">${k}</button>`).join('')}</div>${S.bio&&(PN.mode==='check'||PN.mode==='vk')?'<button class="chip" data-a="bioauth" style="margin-top:14px">👆 Pakai sidik jari</button>':''}</div>`}
 async function pinKey(k){if(k==='c'){$('#lock').className='';return}
   if(k==='⌫')PN.buf=PN.buf.slice(0,-1);else if(PN.buf.length<4)PN.buf+=k;pinRender();if(PN.buf.length<4)return;
   const h=await hashPin(PN.buf),md=PN.mode;
@@ -655,7 +674,7 @@ const WD={senin:0,selasa:1,rabu:2,kamis:3,jumat:4,"jum'at":4,sabtu:5,minggu:6,ah
 const dstr=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const KW={makan:/\b(makan|nasi|ayam|mie|mi|bakso|sarapan|warteg|geprek|soto|lauk|sayur|telur|bubur|lunch|dinner)\b/,jajan:/\b(jajan|kopi|boba|es|snack|cemilan|minum|cafe|kafe|donat|roti|gorengan)\b/,kos:/\b(kos|kost|sewa|listrik|wifi|token|galon|air|laundry|deterjen)\b/,jalan:/\b(ojek|ojol|grab|gojek|bensin|parkir|bus|krl|angkot|transport|tol|maxim)\b/,kuliah:/\b(fotokopi|print|buku|spp|ukt|praktikum|atk|materai)\b/};
 function smartParse(raw,force){
-  const t0=raw.toLowerCase();let t=' '+t0.replace(/\s+/g,' ').trim()+' ',tm=null,due=null,day=null,room='';
+  const t0=w2n(raw.toLowerCase());let t=' '+t0.replace(/\s+/g,' ').trim()+' ',tm=null,due=null,day=null,room='';
   t=t.replace(/\b(?:jam|pukul|pkl)\s*(\d{1,2})(?:[.:](\d{2}))?/,(m,h,mi)=>{tm=[+h,+(mi||0)];return ' '}).replace(/\b(\d{1,2})[.:](\d{2})\b/,(m,h,mi)=>{if(!tm&&+h<24&&+mi<60){tm=[+h,+mi];return ' '}return m});
   if(tm&&tm[0]>=1&&tm[0]<=6&&!/pagi|subuh/.test(t0))tm[0]+=12;
   const dd=new Date();dd.setHours(0,0,0,0);const sh=n=>{const x=new Date(dd);x.setDate(x.getDate()+n);return dstr(x)};
@@ -676,12 +695,12 @@ function smartParse(raw,force){
   const cap=x=>{x=x.replace(/\s+/g,' ').trim();return x?x[0].toUpperCase()+x.slice(1):''},hm=tm?String(tm[0]).padStart(2,'0')+(type==='class'?':':'.')+String(tm[1]).padStart(2,'0'):'';
   const R={type};
   if(type==='tx'){R.amt=a?Math.round(a.v):'';R.dir=/\b(kiriman|gajian|gaji|terima|dapat|masuk|bonus|saku|cashback|refund)\b/.test(t0)?'in':'out';R.cat=Object.keys(KW).find(k=>KW[k].test(t0))||'lain';R.wid=wid;R.note=cap((a?t.replace(a.s,' '):t).replace(/\b(pakai|pake|via|dari)\b/g,' '))}
-  else if(type==='class'){R.day=DAYS[day!==null?day:todayIdx()];R.time=hm;R.room=room;R.title=cap(t.replace(/\b(kuliah|kelas|jadwal|matkul|jam|pada)\b/g,' '))}
+  else if(type==='class'){R.day=DAYS[day!==null?day:todayIdx()];R.time=hm;R.room=room;R.title=cap(t.replace(/\b(kuliah|kelas|jadwal|matkul|jam|pada|ruang)\b/g,' '))}
   else{R.title=(cap(t.replace(/\b(deadline|kumpul|dikumpul|untuk)\b/g,' '))||cap(t0))+(hm?' (jam '+hm+')':'');R.due=due||''}
   return R}
 
 let SB='';
-const smartBar=()=>`<div class="card sbar"><input id="sbi" placeholder="⚡ makan siang 15rb gopay…" autocomplete="off"><button class="btn s" data-a="sbgo">Catat</button></div><div class="mu" style="margin:-6px 4px 14px">Coba: “laporan basdat besok jam 5” · “statistik senin 08.00 R301”</div>`;
+const smartBar=()=>`<div class="card sbar"><input id="sbi" placeholder="⚡ makan siang 15rb gopay…" autocomplete="off"><button class="btn s g" data-a="vmic" data-v="smart" aria-label="Catat dengan suara">${ic('mic',18)}</button><button class="btn s" data-a="sbgo">Catat</button></div><div class="mu" style="margin:-6px 4px 14px">Coba: “laporan basdat besok jam 5” · “statistik senin 08.00 R301”</div>`;
 function smartOpen(raw,force){SB=raw;const r=smartParse(raw,force),sv=[tab,sub,usub];
   if(r.type==='tx'){tab='uang';usub='dompet'}else{tab='kuliah';sub=r.type==='task'?'tugas':'jadwal'}
   fab();[tab,sub,usub]=sv;const clk=(g,v)=>{const b=document.querySelector(`#sh .chip[data-g="${g}"][data-v="${v}"]`);b&&b.click()},V=(i,v)=>{const e=$('#'+i);if(e&&v!==undefined)e.value=v};
@@ -777,7 +796,7 @@ const chatSys=()=>`Kamu ${S.mas.name}, maskot aplikasi KostHub milik anak kost d
 function chatOpen(){if(!aiK())return aiKeySheet();S.chatH=S.chatH||[];$('#chat').className='on';chatPaint()}
 const aDesc=a=>esc({tambah_tugas:`📝 Tugas: ${a.judul}${a.tgl?' · '+a.tgl:''}`,tambah_transaksi:`🪙 ${a.jenis==='masuk'?'Masuk':'Keluar'} ${rp(+a.jumlah||0)} · ${a.catatan||a.kategori||''}`,tambah_jadwal:`🗓️ ${a.hari} ${a.jam} ${a.matkul}`,tambah_rutinitas:`🧺 ${a.jam||''} ${a.kegiatan}`,tambah_stok:`🧺 Stok: ${a.bahan}`}[a.tipe]||'');
 function chatPaint(){const H=S.chatH=S.chatH||[],el=$('#chat');
-  if(!$('#chm'))el.innerHTML=`<div class="chh">${masSVG(38)}<div style="flex:1"><b>${esc(S.mas.name)}</b><div class="mu">${S.aiProv==='gemini'?'Gemini':'Claude'} · tahu datamu</div></div><button class="x" data-a="chclr" aria-label="Hapus obrolan">🗑️</button><button class="x" data-a="chx" style="font-size:20px" aria-label="Tutup">✕</button></div><div id="chm"></div><div class="chi"><input id="chin" placeholder="Tanya atau suruh ${esc(S.mas.name)}…" autocomplete="off"><button class="btn s" data-a="chsend">Kirim</button></div>`;
+  if(!$('#chm'))el.innerHTML=`<div class="chh">${masSVG(38)}<div style="flex:1"><b>${esc(S.mas.name)}</b><div class="mu">${S.aiProv==='gemini'?'Gemini':'Claude'} · tahu datamu</div></div><button class="x" data-a="chclr" aria-label="Hapus obrolan">🗑️</button><button class="x" data-a="chx" style="font-size:20px" aria-label="Tutup">✕</button></div><div id="chm"></div><div class="chi"><input id="chin" placeholder="Tanya atau suruh ${esc(S.mas.name)}…" autocomplete="off"><button class="btn s g" data-a="vmic" data-v="chin" aria-label="Bicara">${ic('mic',18)}</button><button class="btn s" data-a="chsend">Kirim</button></div>`;
   const sg=['Besok aku ngapain aja?','Aku boros nggak minggu ini?','Ide makan malam dari stok','Bikinin jadwal belajar UAS 3 hari lagi'];
   $('#chm').innerHTML=(H.length?'':`<div class="empty"><div style="display:inline-block">${masSVG(80)}</div><br>Halo! Aku ${esc(S.mas.name)}. Aku tahu jadwal, tugas, dan uangmu. Tanya apa aja, atau suruh aku mencatat sesuatu.</div><div class="chips" style="justify-content:center">${sg.map(x=>`<button class="chip" data-a="chsug" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>`)+
   H.map((m,i)=>m.r==='user'?`<div class="bb u">${esc(m.t)}</div>`:`<div class="bb m">${esc(m.t)}${m.a&&m.a.length?`<div class="act">${m.a.map(a=>`<div>${aDesc(a)}</div>`).join('')}${m.ap?'<div class="mu">✅ Sudah ditambahkan</div>':`<button class="btn s" data-a="chap" data-id="${i}">Terapkan ${m.a.length} perubahan</button>`}</div>`:''}</div>`).join('')+(CH.busy?'<div class="bb m typ"><i></i><i></i><i></i></div>':'');
@@ -901,6 +920,59 @@ function sndStop(){const c=SND.ctx;if(!SND.on||!c)return;const t=c.currentTime,g
 const sndUI=()=>`<div class="mu" style="margin-top:6px">Suasana belajar</div><div class="chips" style="justify-content:center;margin:6px 0 8px">${[['hening','🔇 Hening'],['hujan','🌧️ Hujan'],['ombak','🌊 Ombak'],['kipas','🌀 Kipas'],['lofi','🎹 Lo-fi']].map(([k,l])=>`<button class="chip ${S.snd.scene===k?'on':''}" data-a="snd" data-v="${k}">${l}</button>`).join('')}</div><div class="row2" style="margin-bottom:12px"><span>🔈</span><input type="range" id="sv" min="0" max="1" step=".05" value="${S.snd.vol}" style="accent-color:var(--a)"><button class="chip ${SND.on&&!FT.run?'on':''}" data-a="sndtry">${SND.on&&!FT.run?'⏹ Stop':'🔊 Coba'}</button></div>`;
 document.addEventListener('input',e=>{if(e.target.id==='sv'){S.snd.vol=+e.target.value;save();if(SND.g){SND.g.gain.cancelScheduledValues(0);SND.g.gain.value=S.snd.vol}}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){VT.open=false;if(SND.ctx&&SND.on)SND.ctx.suspend()}else if(SND.ctx&&SND.on)SND.ctx.resume()});
+
+/* ===== Suara, sidik jari, tahan dulu, latihan AI ===== */
+IC.mic='<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>';
+function w2n(t){const U={nol:0,satu:1,dua:2,tiga:3,empat:4,lima:5,enam:6,tujuh:7,delapan:8,sembilan:9},W='nol|satu|dua|tiga|empat|lima|enam|tujuh|delapan|sembilan|sepuluh|sebelas|belas|puluh|ratus|ribu|juta|seratus|seribu|sejuta',re=new RegExp('\\b(?:(?:'+W+')\\s+)*(?:'+W+')\\b','g');
+  return t.replace(re,m=>{const tk=m.split(/\s+/);if(tk.length>1&&tk.every(w=>w in U))return tk.map(w=>U[w]).join('');let tot=0,pt=0,ld=0;for(const w of tk){if(w in U){pt+=U[w];ld=U[w]}else if(w==='sepuluh'){pt+=10;ld=0}else if(w==='sebelas'){pt+=11;ld=0}else if(w==='belas'){pt+=10;ld=0}else if(w==='puluh'){pt+=ld*9;ld=0}else if(w==='ratus'){pt+=ld?ld*99:100;ld=0}else if(w==='seratus'){pt+=100;ld=0}else if(w==='ribu'){tot+=(pt||1)*1000;pt=0;ld=0}else if(w==='seribu'){tot+=1000}else if(w==='juta'){tot+=(pt||1)*1e6;pt=0;ld=0}else if(w==='sejuta'){tot+=1e6}}return String(tot+pt)})}
+let VR={on:false,txt:'',h:[],tg:'smart'};
+async function voiceStart(tg){const P=plug('SpeechRecognition');if(!P)return toast('Suara hanya jalan di APK. Update package.json lalu build ulang');if(VR.on)return voiceEnd(true);
+  try{const a=await P.available();if(!a.available)return toast('Pengenalan suara tidak tersedia di HP ini');const pm=await P.requestPermissions();if(pm.speechRecognition!=='granted')return toast('Izin mikrofon ditolak');
+    VR={on:true,txt:'',h:[],tg};openSheet('🎙️ Lagi mendengarkan…','<div class="empty"><div class="vmic">🎙️</div><div id="vtx" style="font-size:16px;min-height:44px;color:var(--ink)">Silakan bicara…</div></div><div class="row2"><button class="btn" style="flex:1" data-a="vend">Selesai</button><button class="btn g" style="flex:1" data-a="vcan">Batal</button></div>');
+    VR.h.push(await P.addListener('partialResults',d=>{if(d.matches&&d.matches[0]){VR.txt=d.matches[0];const e=$('#vtx');if(e)e.textContent=VR.txt}}));
+    VR.h.push(await P.addListener('listeningState',d=>{if(d.status==='stopped')setTimeout(()=>voiceEnd(true),350)}));
+    await P.start({language:'id-ID',maxResults:1,partialResults:true,popup:false})}
+  catch(e){voiceEnd(false);toast('Gagal memulai suara: '+(e&&e.message||e))}}
+async function voiceEnd(go){if(!VR.on)return;VR.on=false;const P=plug('SpeechRecognition'),t=VR.txt.trim(),tg=VR.tg;try{if(P)await P.stop()}catch(e){}VR.h.forEach(h=>{try{h.remove()}catch(e){}});VR.h=[];closeSheet();
+  if(!go)return;if(!t)return toast('Tidak terdengar apa pun, coba lagi');if(tg==='smart')smartOpen(t);else{const i=$('#'+tg);if(i){i.value=(i.value?i.value+' ':'')+t;i.focus()}}}
+// Sidik jari
+async function bioAuth(){const P=plug('NativeBiometric');if(!P){toast('Sidik jari belum ada di build ini');return false}
+  try{await P.verifyIdentity({reason:'Buka KostHub',title:'Buka KostHub',subtitle:'Tempelkan jari kamu',negativeButtonText:'Pakai PIN',useFallback:false,maxAttempts:3});return true}catch(e){return false}}
+async function bioUnlock(){if(!$('#lock').classList.contains('on')||!(PN.mode==='check'||PN.mode==='vk'))return;if(await bioAuth()){$('#lock').className='';const f=PN.cb;PN.cb=null;f&&f()}}
+async function sbioToggle(){if(S.bio){S.bio=false;save();stRef();return toast('Sidik jari dimatikan')}const P=plug('NativeBiometric');if(!P)return toast('Sidik jari belum ada di build ini. Update package.json lalu build ulang');
+  try{const r=await P.isAvailable();if(!r.isAvailable)return toast('Belum ada sidik jari terdaftar di HP. Daftarkan dulu di Pengaturan HP')}catch(e){return toast('Perangkat tidak mendukung sidik jari')}
+  if(await bioAuth()){S.bio=true;save();stRef();toast('Sidik jari aktif 👆')}else toast('Verifikasi dibatalkan')}
+// Daftar tahan dulu
+const holdReady=h=>h.at+h.hrs*36e5;
+function vTahan(){const H=S.hold||[],now=Date.now(),wait=H.filter(h=>h.st==='wait').sort((a,b)=>holdReady(a)-holdReady(b)),sk=H.filter(h=>h.st==='skip'),saved=sk.reduce((a,h)=>a+h.price,0),bought=H.filter(h=>h.st==='bought').length;
+  const row=h=>{const left=holdReady(h)-now,ok=left<=0,hrs=Math.ceil(left/36e5);return `<div class="it" style="align-items:flex-start"><div class="em">${ok?'🤔':'⏳'}</div><div class="b"><b>${esc(h.name)}</b> · ${rp(h.price)}<div class="mu">${ok?'Waktunya memutuskan. Masih mau?':'Tahan '+(hrs>=24?Math.floor(hrs/24)+' hari '+hrs%24+' jam':hrs+' jam')+' lagi'}${h.why?' · '+esc(h.why):''}</div>${ok?`<div class="row2" style="margin-top:8px"><button class="btn s" data-a="hbuy" data-id="${h.id}">Jadi beli</button><button class="btn s g" data-a="hskip" data-id="${h.id}">Nggak jadi 💪</button></div>`:`<div class="bar"><i style="width:${Math.round(Math.min(1,(now-h.at)/(h.hrs*36e5))*100)}%"></i></div>`}</div><button class="x" data-a="hdel" data-id="${h.id}">✕</button></div>`};
+  return `<div class="card a"><div class="mu">Uang yang berhasil kamu selamatkan</div><div class="big" data-n="${saved}">${rp(saved)}</div><div class="mu">${sk.length} keinginan dibatalkan · ${bought} jadi dibeli</div></div><div class="card"><h2>⏳ Daftar Tahan Dulu</h2>${wait.map(row).join('')||empty('🛒','Mau beli sesuatu yang cuma keinginan? Tahan dulu di sini. Tekan + buat menambah')}</div>`}
+function holdSheet(){openSheet('Tahan dulu ⏳',fld('hn','Mau beli apa?','text','Sepatu putih')+fld('hp','Harganya (Rp)','number','350000')+fld('hw','Kenapa pengen? (opsional)','text')+'<div class="mu" style="margin:2px 0 6px">Tahan berapa lama?</div>'+chips('hh',[['24','24 jam'],['48','2 hari'],['72','3 hari']],'48')+'<div style="height:14px"></div>','Tahan',()=>{const n=val('hn').trim(),pr=+val('hp');if(!n||!(pr>0))return toast('Isi barang dan harganya');S.hold=S.hold||[];S.hold.push({id:uid(),name:n,price:pr,why:val('hw').trim(),hrs:+CV.hh,at:Date.now(),st:'wait'});toast(S.mas.name+': Bagus, kita tahan dulu 🤝');return true})}
+function holdBuy(id){const h=S.hold.find(x=>x.id===id);if(!h)return;openSheet('Jadi beli '+esc(h.name),`<label class="f"><span>Catat ke dompet</span><select id="hbw"><option value="">Jangan catat</option>${S.wallets.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('')}</select></label>`,'Simpan',()=>{h.st='bought';const w=val('hbw');if(w)S.tx.push({id:uid(),w,type:'out',amt:h.price,note:h.name,cat:'jajan',date:today()});toast('Oke, semoga tidak menyesal 😄');return true})}
+// Latihan presentasi & ajari maskot (AI)
+let CO={mode:'',topic:'',kind:'',lvl:'',n:5,notes:'',busy:false,done:false,hist:[]};
+const KIND={presentasi:['dosen penguji presentasi tugas','Presentasi'],sidang:['dosen penguji sidang','Sidang'],wawancara:['pewawancara HRD untuk magang','Wawancara']};
+const coCard=()=>`<div class="card"><h2>🎓 Latihan & belajar</h2><div class="mu" style="margin-bottom:10px">Dengan AI: dilatih jadi penguji, atau mengajari maskot sampai kamu benar-benar paham.</div><div class="row2"><button class="btn" style="flex:1" data-a="colat">🎤 Latihan presentasi</button><button class="btn g" style="flex:1" data-a="coaj">🧠 Ajari maskot</button></div></div>`;
+function coLatSheet(){openSheet('🎤 Latihan presentasi/sidang','<div class="mu" style="margin-bottom:6px">Jenis</div>'+chips('ck',[['presentasi','Presentasi'],['sidang','Sidang'],['wawancara','Wawancara']],'presentasi')+'<div style="height:10px"></div>'+fld('ct2','Topik','text','Normalisasi database')+'<label class="f"><span>Ringkasan materi (opsional)</span><textarea id="cnt" rows="3" placeholder="Tempel poin penting biar pertanyaannya sesuai"></textarea></label><div class="mu" style="margin:2px 0 6px">Jumlah pertanyaan</div>'+chips('cq',[['3','3'],['5','5'],['7','7']],'5')+'<div style="height:14px"></div>','Mulai latihan',()=>{const t=val('ct2').trim();if(!t)return toast('Isi topiknya dulu');if(!aiK()){aiKeySheet();return false}CO={mode:'latih',topic:t,kind:CV.ck,n:+CV.cq,notes:val('cnt').trim(),lvl:'',busy:false,done:false,hist:[]};coOpen();coSend('Aku siap, silakan mulai.');return true})}
+function coAjSheet(){openSheet('🧠 Ajari '+esc(S.mas.name),fld('ct3','Konsep yang mau kamu ajarkan','text','Hukum Newton 2')+'<div class="mu" style="margin:2px 0 6px">Tingkat</div>'+chips('cl',[['SMA','SMA'],['kuliah','Kuliah']],'kuliah')+'<div class="mu" style="margin:10px 0">Jelaskan ke maskot pakai bahasamu sendiri. Dia akan pura-pura bingung dan bertanya. Di akhir, AI menunjukkan bagian yang belum kamu kuasai.</div>','Mulai',()=>{const t=val('ct3').trim();if(!t)return toast('Isi konsepnya dulu');if(!aiK()){aiKeySheet();return false}CO={mode:'ajari',topic:t,lvl:CV.cl,n:4,kind:'',notes:'',busy:false,done:false,hist:[{r:'assistant',t:'Halo! Aku belum paham sama sekali soal '+t+'. Coba jelasin ke aku dari awal ya, pakai bahasa yang gampang 🙋'}]};coOpen();return true})}
+const latihSys=(asked,ua)=>`Kamu ${S.mas.name}, tapi sekarang berperan sebagai ${KIND[CO.kind][0]}. Topik: ${CO.topic}.${CO.notes?' Materi pengguna: '+CO.notes+'.':''} Aturan: ajukan SATU pertanyaan per giliran dalam bahasa Indonesia yang tegas tapi sopan. Setelah pengguna menjawab, beri tanggapan singkat (1-2 kalimat tentang kelebihan atau kekurangan jawabannya), lalu ajukan pertanyaan berikutnya. Total ${CO.n} pertanyaan; sejauh ini sudah ${asked} pertanyaan diajukan dan pengguna menjawab ${ua-1} kali. ${ua-1>=CO.n?'Pertanyaan sudah habis: BERI PENILAIAN AKHIR sekarang dengan selesai=true.':''} Kalau pengguna minta selesai atau dinilai, beri penilaian akhir. Balas HANYA JSON valid: {"balas":"teks","selesai":false,"skor":0,"kelebihan":["",""],"perbaikan":["",""],"saran":""}. Isi skor (0-100), kelebihan, perbaikan, dan saran HANYA saat selesai=true.`;
+const ajariSys=ua=>`Kamu ${S.mas.name}, maskot yang berperan sebagai murid penasaran yang belum paham sama sekali tentang: ${CO.topic} (tingkat ${CO.lvl}). Pengguna mengajarimu dengan bahasanya sendiri (teknik Feynman). Dengarkan, lalu ajukan SATU pertanyaan polos yang menggali, pura-pura bingung pada bagian yang kabur atau terlalu teknis, dan minta contoh sederhana. Jangan menjelaskan materinya sendiri. Pengguna sudah memberi ${ua} penjelasan. ${ua>=CO.n?'Sudah cukup: BERI PENILAIAN AKHIR sekarang (selesai=true).':''} Kalau pengguna minta selesai atau dinilai, beri penilaian akhir: skor 0-100, "celah" (3-4 bagian yang belum dipahami atau keliru, masing-masing dengan koreksi singkat), dan "soal" (3 soal latihan dari celah itu, tiap soal {"q","a"}). Bahasa Indonesia santai. Balas HANYA JSON valid: {"balas":"teks","selesai":false,"skor":0,"celah":[""],"soal":[{"q":"","a":""}]}. Isi skor, celah, soal HANYA saat selesai=true.`;
+function coOpen(){const e=$('#coach');e.className='on';e.innerHTML='';coPaint()}
+function coRes(j){const L=a=>(Array.isArray(a)?a:[]).map(x=>`<div>• ${esc(x)}</div>`).join('');
+  if(CO.mode==='latih')return `<div class="act"><div><b>Skor: ${esc(j.skor)}/100</b></div><div class="mu">Kelebihan</div>${L(j.kelebihan)}<div class="mu">Perlu diperbaiki</div>${L(j.perbaikan)}${j.saran?`<div class="mu">Saran</div><div>${esc(j.saran)}</div>`:''}</div>`;
+  return `<div class="act"><div><b>Skor pemahaman: ${esc(j.skor)}/100</b></div><div class="mu">Celah yang perlu diperkuat</div>${L(j.celah)}<div class="mu">Soal latihan (ketuk buat lihat jawaban)</div>${(Array.isArray(j.soal)?j.soal:[]).map(x=>`<details><summary>${esc(x.q)}</summary><div class="mu">${esc(x.a)}</div></details>`).join('')}</div>`}
+function coPaint(){const el=$('#coach');
+  if(!$('#com'))el.innerHTML=`<div class="chh">${masSVG(38)}<div style="flex:1;min-width:0"><b>${CO.mode==='latih'?'Latihan '+KIND[CO.kind][1]:'Ajari '+esc(S.mas.name)}</b><div class="mu">${esc(CO.topic)}</div></div><button class="btn s g" data-a="codone">Selesai & nilai</button><button class="x" data-a="cox" style="font-size:20px" aria-label="Tutup">✕</button></div><div id="com"></div><div class="chi"><input id="coin" placeholder="${CO.mode==='latih'?'Jawab pertanyaannya…':'Jelaskan ke '+esc(S.mas.name)+'…'}" autocomplete="off"><button class="btn s g" data-a="vmic" data-v="coin" aria-label="Bicara">${ic('mic',18)}</button><button class="btn s" data-a="cosend">Kirim</button></div>`;
+  $('#com').innerHTML=CO.hist.map(m=>m.r==='user'?`<div class="bb u">${esc(m.t)}</div>`:`<div class="bb m">${esc(m.t)}${m.res?coRes(m.res):''}</div>`).join('')+(CO.busy?'<div class="bb m typ"><i></i><i></i><i></i></div>':'')+(CO.done?'<div class="row2" style="justify-content:center"><button class="btn" data-a="comenu">Latihan lagi</button></div>':'');const b=$('#com');b.scrollTop=b.scrollHeight}
+async function coSend(t){t=(t||'').trim();if(!t||CO.busy||CO.done)return;if(!aiK())return aiKeySheet();CO.hist.push({r:'user',t});CO.busy=true;coPaint();
+  try{const ua=CO.hist.filter(m=>m.r==='user').length,asked=CO.hist.filter(m=>m.r==='assistant'&&!m.err).length,msgs=[];
+    CO.hist.filter(m=>!m.err).forEach(m=>{if(msgs.length&&msgs[msgs.length-1].r===m.r)msgs[msgs.length-1].t+='\n'+m.t;else msgs.push({r:m.r,t:m.t})});while(msgs.length&&msgs[0].r!=='user')msgs.shift();
+    const raw=await aiCall(CO.mode==='latih'?latihSys(asked,ua):ajariSys(ua),msgs,1800);let j;try{j=JSON.parse(raw.slice(raw.indexOf('{'),raw.lastIndexOf('}')+1))}catch(e){j={balas:raw}}
+    const m={r:'assistant',t:String(j.balas||'…')};if(j.selesai){m.res=j;CO.done=true;xp(CO.mode==='latih'?20:15,'co:'+Date.now());conf(innerWidth/2,innerHeight/3,['🎓','⭐','✨'])}CO.hist.push(m)}
+  catch(e){const m=String(e&&e.message||e);CO.hist.push({r:'assistant',t:'😵 '+(/fetch|network/i.test(m)?'Aku nggak bisa terhubung. Cek internet kamu ya.':m),err:1})}
+  CO.busy=false;coPaint()}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='coin'){e.preventDefault();const t=e.target.value;e.target.value='';coSend(t)}});
+if(window.visualViewport){const f=()=>{const c=$('#coach'),v=visualViewport;c.style.top=v.offsetTop+'px';c.style.height=v.height+'px'};visualViewport.addEventListener('resize',f);visualViewport.addEventListener('scroll',f)}
 applyTheme();render(1);sched();runIntro();
 </script>
 </body>
